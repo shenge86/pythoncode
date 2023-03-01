@@ -43,6 +43,8 @@ words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
          1003: ('劳逸不均','Uneven allocation of work and rest.'),
+         1004: ('损人利己','to harm others to benefit oneself; benefit oneself at the expense of others'),
+         1005: ('损人不利己','to harm others without benefiting oneself'),
          2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.')}
 
 
