@@ -1,6 +1,14 @@
 '''
 Chinese test
 '''
+words14 = {'Pronouniciation': ('Nàmèn',''),
+           'Example 1': ('她开始纳闷他在搞什么鬼。','She began to wonder what he was playing at.'),
+           'Example 2': ('我时常纳闷她为什么要那样对待我。','I often wonder about why she treated me like that.'),
+           'Example 3': ('我纳闷为什么火鸡总是和感恩节连在一起呢?','I wonder why turkey seems to belong to Thanksgiving?')}
+
+words122 = {'Example 1': ('咱们叫份外卖吧。','Let us get a takeout.'),
+            'Example 2': ('我可以像纽约其他的康复病人一样叫外卖!','I can order delivery just like anyone else convalescing in New York!')}
+
 words190 = {'Pronouniciation': ('Túbù lǚxíng',''),
             'Example 1': ('她自己喜欢徒步旅行和骑自行车长途旅行这样的运动方式。','Her own preferred methods of exercise are hiking and long cycle rides.'),
             'Example 2': ('他们做了一次穿越森林的十英里徒步旅行。','They went on a ten-mile hike through the forest.')}
@@ -8,9 +16,19 @@ words190 = {'Pronouniciation': ('Túbù lǚxíng',''),
 words192 = {'Alternative': ('吸脂',''),
             'Example 1': ('我想她做过吸脂手术和双眼皮手术。','I think she has had liposuction and double eyelid surgery.')}
 
-words = {100: ('接种','vaccinate'),
+words194 = {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
+
+words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
+         100: ('接种','vaccinate'),
          101: ('阴性','negative(medical)'),
+         102: ('义母','stepmother'),
+         103: ('遗产','inheritance'),
+         104: ('刻毒','spiteful'),
+         105: ('百老汇','Broadway'),
+         106: ('大厦','big building'),
          111: ('甲状','thyroid'),
+         115: ('床单','bedsheet'),
+         122: ('外卖','takeout',words122),
          124: ('关节炎','arthritis'),
          186: ('短语','phrase'),
          187: ('顺时针','clockwise'),
@@ -19,6 +37,8 @@ words = {100: ('接种','vaccinate'),
          190: ('徒步旅行','trekking',words190),
          191: ('贬义词','derogatory term'),
          192: ('抽脂','liposuction',words192),
+         193: ('地标','landmark'),
+         194: ('伦敦西区','London West End',words194),
          1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
@@ -40,15 +60,18 @@ if __name__ == '__main__':
                 print(v[1])
             print('===================================================')
 
-    print('Word Test! Any time you can type in give up to get the answer.')
+    print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
     print('You can also type in quit to exit the program.')
+    print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
+    print('你也可以输入quit退出程序。')
     temp = iter(words)
     word_index = next(temp,None)
     while True:
         chooseword = input(f'Please type the Chinese for {words[word_index][1]}: ')
-        if chooseword in ['give up']:
-            print('Answer: ')
-            print('{:<5} | {:口<10} | {}'.format(word_index,words[word_index][0],words[word_index][1]))
+        if chooseword in ['give up','gu','next']:
+            print('Answer (答案): ')
+            value = words[word_index]
+            print('{:<5} | {:口<10} | {}'.format(word_index,value[0],value[1]))
             if len(value) > 2:
                 for k,v in value[2].items():
                     print(k+': ')
@@ -58,12 +81,12 @@ if __name__ == '__main__':
             word_index = next(temp,None)
             continue
         elif chooseword in ['quit','q']:
-            print('Quitting.')
+            print('Quitting! 退出！')
             break
         elif chooseword not in [words[word_index][0]]:
-            print('You are incorrect! Try again.')
+            print('You are incorrect! Try again. 错误！请再次试试。')
             continue
         else:
-            print('Correct! Moving to next word.')
+            print('Correct! Moving to next word. 对！继续下个词。')
             word_index = next(temp,None)
             continue
