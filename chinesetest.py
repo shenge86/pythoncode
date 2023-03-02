@@ -16,7 +16,7 @@ words190 = {'Pronouniciation': ('Túbù lǚxíng',''),
 words192 = {'Alternative': ('吸脂',''),
             'Example 1': ('我想她做过吸脂手术和双眼皮手术。','I think she has had liposuction and double eyelid surgery.')}
 
-words194 = {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
+words5000= {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
 
 words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
          100: ('接种','vaccinate'),
@@ -38,14 +38,17 @@ words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
          191: ('贬义词','derogatory term'),
          192: ('抽脂','liposuction',words192),
          193: ('地标','landmark'),
-         194: ('伦敦西区','London West End',words194),
+         194: ('壁画','mural'),
          1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
          1003: ('劳逸不均','Uneven allocation of work and rest.'),
          1004: ('损人利己','to harm others to benefit oneself; benefit oneself at the expense of others'),
          1005: ('损人不利己','to harm others without benefiting oneself'),
-         2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.')}
+         1006: ('吃力不讨好','work hard but get little result; do a hard but thankless job'),
+         1007: ('家喻户晓','known to every household; widely known'),
+         2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.'),
+         5000: ('伦敦西区','London West End',words5000)}
 
 
 
