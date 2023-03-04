@@ -1,6 +1,8 @@
 '''
 Chinese test
 '''
+import random
+
 words14 = {'Pronouniciation': ('Nàmèn',''),
            'Example 1': ('她开始纳闷他在搞什么鬼。','She began to wonder what he was playing at.'),
            'Example 2': ('我时常纳闷她为什么要那样对待我。','I often wonder about why she treated me like that.'),
@@ -47,6 +49,7 @@ words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
          1005: ('损人不利己','to harm others without benefiting oneself'),
          1006: ('吃力不讨好','work hard but get little result; do a hard but thankless job'),
          1007: ('家喻户晓','known to every household; widely known'),
+         1008: ('说一不二','stand by one\'s word'),
          2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.'),
          5000: ('伦敦西区','London West End',words5000)}
 
@@ -72,7 +75,7 @@ if __name__ == '__main__':
     temp = iter(words)
     word_index = next(temp,None)
     while True:
-        chooseword = input(f'Please type the Chinese for {words[word_index][1]}: ')
+        chooseword = input(f'Please type the Chinese for: {words[word_index][1]}: ')
         if chooseword in ['give up','gu','next']:
             print('Answer (答案): ')
             value = words[word_index]
@@ -83,7 +86,13 @@ if __name__ == '__main__':
                     print(v[0])
                     print(v[1])
                 print('===================================================')
-            word_index = next(temp,None)
+
+            nextorrandom = input('Next word or random 顺序下个或者随机? Type in next (下) or random (随): ')
+            if nextorrandom in ['next','n','下','1']:
+                word_index = next(temp,None)
+            else:
+                print('Random word used. 随机单词。')
+                word_index, _ = random.choice(list(words.items()))
             continue
         elif chooseword in ['quit','q']:
             print('Quitting! 退出！')
@@ -92,6 +101,11 @@ if __name__ == '__main__':
             print('You are incorrect! Try again. 错误！请再次试试。')
             continue
         else:
-            print('Correct! Moving to next word. 对！继续下个词。')
-            word_index = next(temp,None)
+            print('Correct! Moving to next word. 正确！继续下个词。')
+            nextorrandom = input('Next word or random 顺序下个或者随机? Type in next (下) or random (随): ')
+            if nextorrandom in ['next','n','下','1']:
+                word_index = next(temp,None)
+            else:
+                print('Random word used. 随机单词。')
+                word_index, _ = random.choice(list(words.items()))
             continue
