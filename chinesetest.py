@@ -19,16 +19,23 @@ words192 = {'Alternative': ('吸脂',''),
             'Example 1': ('我想她做过吸脂手术和双眼皮手术。','I think she has had liposuction and double eyelid surgery.')}
 
 words195 = {'Example 1': ('The theory is too difficult to understand, can you elaborate on it?','这个理论太深奥了, 您能不能讲得通透一点?'),
-            'Example 2': ('The sky was changing from translucent blue to thicker grey.','天空由通透的湛蓝色变成了暗灰色。')}
+            'Example 2': ('The sky was changing from translucent blue to thicker grey.','天空由通透的湛蓝色变成了暗灰色。'),
+            'Example 3': ('Put each object in front of the lamp . which one is the most transparent', '将物件放在灯座，看看哪一件通透能力最强？')}
 
 words5000= {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
 
-words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
+words = { 1: ('上司','superior'),
+          2: ('顾虑','concern; misgivings'),
+          3: ('罕见','rare; seldomly seen'),
+         12: ('真挚','sincere (Zhēnzhì)'),
+         13: ('地平线','horizon'),
+         14: ('纳闷','wondered (in a perplexed way)',words14),
+         15: ('人道主义','humanism'),
          100: ('接种','vaccinate'),
          101: ('阴性','negative(medical)'),
          102: ('义母','stepmother'),
          103: ('遗产','inheritance'),
-         104: ('刻毒','spiteful'),
+         104: ('刻毒','spiteful; malicious'),
          105: ('百老汇','Broadway'),
          106: ('大厦','big building'),
          111: ('甲状','thyroid'),
@@ -44,7 +51,8 @@ words = { 14: ('纳闷','wondered (in a perplexed way)',words14),
          192: ('抽脂','liposuction',words192),
          193: ('地标','landmark'),
          194: ('壁画','mural'),
-         195: ('通透','transparent',words195),
+         195: ('通透','penetrating',words195),
+         196: ('弹幕','danmaku; bullet curtain (subtitle system in online video platforms where comments shoot across the screen)'),
          1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
