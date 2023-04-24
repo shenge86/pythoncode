@@ -37,6 +37,8 @@ words195 = {'Example 1': ('The theory is too difficult to understand, can you el
             'Example 3': ('Put each object in front of the lamp . which one is the most transparent', '将物件放在灯座，看看哪一件通透能力最强？')
             }
 
+words204 = {'Example 1': ('当主角生病时，替补终于得到了第一次大好机会。')}
+
 words5000= {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
 
 words = { 1: ('上司','superior'),
@@ -94,6 +96,9 @@ words = { 1: ('上司','superior'),
          201: ('小龙虾','crawfish'),
          202: ('试镜','audition'),
          203: ('回拨','callback'),
+         204: ('替补','substitute'),
+         205: ('替角','understudy'),
+         206: ('剧作家','playwright'),
          1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
