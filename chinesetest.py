@@ -59,6 +59,7 @@ words = { 1: ('上司','superior'),
          16: ('膈应','【方言】指讨厌、令人不舒服，但未达到要呕吐的程度。更多的指的是心理上的不舒服。'),
          17: ('腻歪','【北方方言】1.因次数过多或时间过长而感觉厌烦 2.厌恶 3.无聊 4.一些情侣之间比较亲昵的事，说一些亲昵的话'),
          18: ('预算','budget'),
+         19: ('关张','close down; go out of business'),
          100: ('接种','vaccinate'),
          101: ('阴性','negative(medical)'),
          102: ('义母','stepmother'),
@@ -124,7 +125,15 @@ words = { 1: ('上司','superior'),
          5001: ('恐怖小店','Little Shop of Horrors'),
          }
 
-
+def jumpword(nextorrandom):
+    if nextorrandom in ['next','n','下','1']:
+        word_index = next(temp,None)
+    elif nextorrandom[0:3] in ['num']:
+        word_index = int(nextorrandom[3:])
+    else:
+        print('Random word used. 随机单词。')
+        word_index, _ = random.choice(list(words.items()))
+    return word_index
 
 if __name__ == '__main__':
     print('Chinese Dictionary Tester')
@@ -146,8 +155,6 @@ if __name__ == '__main__':
     temp = iter(words)
     word_index = next(temp,None)
 
-    nextorrandom = input('Next word or random 顺序下个或者随机? Type in next (下) or random (随): ')
-
     while True:
         chooseword = input(f'Please type the Chinese for: {words[word_index][1]}: ')
         if chooseword in ['give up','gu','next']:
@@ -160,12 +167,9 @@ if __name__ == '__main__':
                     print(v[0])
                     print(v[1])
                 print('===================================================')
-
-            if nextorrandom in ['next','n','下','1']:
-                word_index = next(temp,None)
-            else:
-                print('Random word used. 随机单词。')
-                word_index, _ = random.choice(list(words.items()))
+            
+            nextorrandom = input('Next word or random 顺序下个或者随机或者选挑号码? Type in next (下) or random (随) or a number （num#): ')
+            word_index = jumpword(nextorrandom)
             continue
         elif chooseword in ['quit','q']:
             print('Quitting! 退出！')
@@ -175,9 +179,5 @@ if __name__ == '__main__':
             continue
         else:
             print('Correct! Moving to next word. 正确！继续下个词。')
-            if nextorrandom in ['next','n','下','1']:
-                word_index = next(temp,None)
-            else:
-                print('Random word used. 随机单词。')
-                word_index, _ = random.choice(list(words.items()))
+            word_index = jumpword('next')
             continue
