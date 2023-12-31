@@ -1,6 +1,7 @@
 '''
 Chinese test
 '''
+import sys
 import random
 
 words7  = {'Prounciation: ': ('jiāolǜ',''),
@@ -100,6 +101,11 @@ words = { 1: ('上司','superior'),
          204: ('替补','substitute'),
          205: ('替角','understudy'),
          206: ('剧作家','playwright'),
+         207: ('二维码','QR code'),
+         208: ('支点','fulcrum'),
+         209: ('无穷','endless'),
+         210: ('受害者','victim'),
+         211: ('严苛','harsh'),
          1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
          1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
          1002: ('劳逸结合','Strike a proper balance between work and rest.'),
@@ -136,48 +142,80 @@ def jumpword(nextorrandom):
     return word_index
 
 if __name__ == '__main__':
-    print('Chinese Dictionary Tester')
-    print('If you see blanks please type as follows in command line: ')
-    print('chcp 936')
-    for key,value in words.items():
-        print('{:<5} | {:口<10} | {}'.format(key,value[0],value[1]))
-        if len(value) > 2:
-            for k,v in value[2].items():
-                print(k+': ')
-                print(v[0])
-                print(v[1])
-            print('===================================================')
-
-    print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
-    print('You can also type in quit to exit the program.')
-    print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
-    print('你也可以输入quit退出程序。')
-    temp = iter(words)
-    word_index = next(temp,None)
-
-    while True:
-        chooseword = input(f'Please type the Chinese for: {words[word_index][1]}: ')
-        if chooseword in ['give up','gu','next']:
-            print('Answer (答案): ')
-            value = words[word_index]
-            print('{:<5} | {:口<10} | {}'.format(word_index,value[0],value[1]))
+    if '-dict' in sys.argv:
+        print('Using as dictionary instead of tester...')
+        
+        # get all chinese words in dictionary
+        chinesewords = []
+        for r in words.values():
+            chinesewords.append(r[0])
+        
+        while True:
+            chooseword = input('Enter chinese character or enter Q to quit: ')
+            if chooseword in chinesewords:
+                matching_key = next((key for key, value in words.items() if value[0] == chooseword), None)
+                value = words[matching_key]
+                print(value[1])
+                if len(value) > 2:
+                    sentence_dict = words[matching_key][2]
+                    for k,v in value[2].items():
+                        print(k+': ')
+                        print(v[0])
+                        print(v[1])
+                    print('===================================================')
+                else:
+                    print('No example sentence exists for this word.')
+                
+            elif chooseword in ['quit','Q','q']:
+                print('Quitting! 退出！')
+                break
+            else:
+                print('Word not in the dictionary. Try again!')
+                continue
+            
+    else:
+        print('Chinese Dictionary Tester')
+        print('If you see blanks please type as follows in command line: ')
+        print('chcp 936')
+        for key,value in words.items():
+            print('{:<5} | {:口<10} | {}'.format(key,value[0],value[1]))
             if len(value) > 2:
                 for k,v in value[2].items():
                     print(k+': ')
                     print(v[0])
                     print(v[1])
                 print('===================================================')
-            
-            nextorrandom = input('Next word or random 顺序下个或者随机或者选挑号码? Type in next (下) or random (随) or a number （num#): ')
-            word_index = jumpword(nextorrandom)
-            continue
-        elif chooseword in ['quit','q']:
-            print('Quitting! 退出！')
-            break
-        elif chooseword not in [words[word_index][0]]:
-            print('You are incorrect! Try again. 错误！请再次试试。')
-            continue
-        else:
-            print('Correct! Moving to next word. 正确！继续下个词。')
-            word_index = jumpword('next')
-            continue
+    
+        print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
+        print('You can also type in quit to exit the program.')
+        print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
+        print('你也可以输入quit退出程序。')
+        temp = iter(words)
+        word_index = next(temp,None)
+    
+        while True:
+            chooseword = input(f'Please type the Chinese for: {words[word_index][1]}: ')
+            if chooseword in ['give up','gu','next']:
+                print('Answer (答案): ')
+                value = words[word_index]
+                print('{:<5} | {:口<10} | {}'.format(word_index,value[0],value[1]))
+                if len(value) > 2:
+                    for k,v in value[2].items():
+                        print(k+': ')
+                        print(v[0])
+                        print(v[1])
+                    print('===================================================')
+                
+                nextorrandom = input('Next word or random 顺序下个或者随机或者选挑号码? Type in next (下) or random (随) or a number （num#): ')
+                word_index = jumpword(nextorrandom)
+                continue
+            elif chooseword in ['quit','q']:
+                print('Quitting! 退出！')
+                break
+            elif chooseword not in [words[word_index][0]]:
+                print('You are incorrect! Try again. 错误！请再次试试。')
+                continue
+            else:
+                print('Correct! Moving to next word. 正确！继续下个词。')
+                word_index = jumpword('next')
+                continue
