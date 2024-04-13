@@ -22,7 +22,8 @@ if __name__ == '__main__':
            'mar20': timedelta(hours=1,minutes=42),
            'mar21': timedelta(hours=8),
            'apr02': timedelta(hours=3,minutes=30),
-           'apr08': timedelta(hours=8)
+           'apr08': timedelta(hours=8),
+           'apr10': timedelta(hours=8),
            }
     
     PTO_sum = 0 # seconds
