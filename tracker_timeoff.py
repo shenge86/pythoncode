@@ -24,6 +24,17 @@ if __name__ == '__main__':
            'apr02': timedelta(hours=3,minutes=30),
            'apr08': timedelta(hours=8),
            'apr10': timedelta(hours=8),
+           'apr16': timedelta(hours=6,minutes=10),
+           'apr22': timedelta(hours=8),
+           'apr23': timedelta(hours=8),
+           'apr24': timedelta(hours=8),
+           'apr25': timedelta(hours=8),
+           'apr26': timedelta(hours=8),
+           'may01': timedelta(hours=4),
+           'may02': timedelta(hours=2),           
+           'may03': timedelta(hours=2,minutes=43),
+           'may06': timedelta(hours=4,minutes=39),
+           'may08': timedelta(hours=4),
            }
     
     PTO_sum = 0 # seconds
@@ -58,3 +69,5 @@ if __name__ == '__main__':
         
     print('Total seconds: ', PTO_sum)
     print('Total hours  : ', PTO_sum / 3600)
+    print('Total days   : ', PTO_sum / 3600 / 8)
+    print('Total weeks  : ', PTO_sum / 3600 / 8 / 7)
