@@ -7,7 +7,16 @@ Created on Wed Jun 26 19:54:48 2024
 @description:
     
     Plots out different vectors according to specifications.
+    
+@version:
+    1.1
+    Add transverse vectors
+    
+    1.0 
+    Add translational vectors with distributions
 """
+
+import os, sys
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -21,12 +30,28 @@ if __name__ == '__main__':
     mean = np.linalg.norm(vector)
     vector_unit = vector / mean
     
-    # number of randomized vectors
-    n = 1000
+    try:
+        n = sys.argv[1]
+    except:
+        # number of randomized vectors
+        n = input('Enter number of randomized vectors to use: ')
+    n = int(n)
     
+    try:
+        output = sys.argv[2]
+    except:
+        output = input('Enter file name of output: ')
+    
+    if output[-4:] != '.npy':
+        print('Appending .npy extension to file')
+        output += '.npy'
+        
+    output_folder = 'output_vectors'
     #%% Create fixed magnitude offsets (resolution error)
     threesigma = 1.5
     sigma      = threesigma/3    # this is a fixed magnitude
+    
+    print('Creating fixed magnitude offsets with three sigma: ', threesigma)
     
     # uncomment following only if we are saying we care just 1 error
     # If we want to calculate it directly do this:
@@ -64,21 +89,38 @@ if __name__ == '__main__':
     
     
     #%% Create proportional magnitude offsets
-    sigma = 0.2 # this multiplied by 100 is a percentage
+    threesigma_prop = 0.6
+    sigma = threesigma_prop/3 # this multiplied by 100 is a percentage
+    
+    print('Creating proportional magnitude offsets with three sigma: ', threesigma_prop)
+    
     vectors_proportional_magnitudes = np.random.normal(0, sigma, n)
     magnitude_proportional_matrix   = np.transpose(np.tile(vectors_proportional_magnitudes,(3,1)))
 
     # note this is NOT based on unit vector but the vector itself    
     vectors_proportionaloffset      = vector * magnitude_proportional_matrix
     
+    #%% Now add transverse direction
+    threesigma_transpose = 1.0
+    sigma = threesigma_transpose/3
+    print('Creating transverse fixed magnitude offsets with three sigma: ', threesigma_transpose)
+    
+    
+    
     #%% Combined vector and histogram plot    
     vectors_totalerror = vectors_fixedoffset + vectors_proportionaloffset
     vectors            = vector + vectors_totalerror
     
-    # if only in-line, this should match the original unit vector
+    vectors_magnitudes = np.zeros(n)
+    for i,v in enumerate(vectors):
+        vectors_magnitudes[i] = np.linalg.norm(v)
+    vectors_magnitudes_mean = np.mean(vectors_magnitudes)
+    vectors_magnitudes_std  = np.std(vectors_magnitudes)
+    
+    # if only in-line, the unit vector direction should match with the original unit vector
     # the direction does not change so all unit vectors should match!
-    for vector in vectors:
-        vector_normalized = vector/np.linalg.norm(vector)
+    for vi in vectors:
+        vector_normalized = vi/np.linalg.norm(vi)
         print(vector_normalized)
         # assert np.array_equal(vector_normalized,vector_unit) # cannot do this since may have rounding errors
         assert np.allclose(vector_normalized,vector_unit,atol=1e-6)
@@ -86,25 +128,25 @@ if __name__ == '__main__':
     #%%
     # Create the histogram
     # plt.hist(vectors, bins=50, alpha=0.75, color='blue', edgecolor='black')
-    plt.hist(vectors, bins=50, alpha=0.75)
+    plt.hist(vectors_magnitudes, bins=50, alpha=0.75)
     
     # Add labels and title
-    plt.xlabel('Value')
+    plt.xlabel('Vector Magnitude')
     plt.ylabel('Frequency')
-    plt.title('Histogram of Normal Distribution (3-Sigma)')
+    plt.title(f'Histogram of Normal Distribution (3-Sigma)\nMean: {vectors_magnitudes_mean} / Std: {vectors_magnitudes_std}')
     
     # Add a vertical line for the mean
-    plt.axvline(mean, color='red', linestyle='dashed', linewidth=2)
+    # cannot use the original vector magnitude as mean since adding multiple distributions
+    # changes what the mean of the combined distribution might be
+    plt.axvline(vectors_magnitudes_mean, color='red', linestyle='dashed', linewidth=2)
     
     # Add vertical lines for 1-sigma, 2-sigma, and 3-sigma
     for i in range(1, 4):
-        plt.axvline(mean + i*sigma, color='green', linestyle='dashed', linewidth=1)
-        plt.axvline(mean - i*sigma, color='green', linestyle='dashed', linewidth=1)
+        plt.axvline(vectors_magnitudes_mean + i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
+        plt.axvline(vectors_magnitudes_mean - i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
     
     # Show the plot
     plt.show()
-    
-    
     #%% Create a figure
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -145,4 +187,17 @@ if __name__ == '__main__':
     # Show the plot
     plt.show()
     
+    # if you show, you have to comment out show to be able to save
+    # Save the plot
+    # plt.savefig(output_folder + '/' + output[:-4] + '.png')
     
+    #%% Save the numpy array for loading in future
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+    
+    with open(output_folder + '/' + output,'wb') as f:
+        np.save(f, vector)
+        np.save(f, vectors)
+        np.save(f, vectors_fixedoffset)
+        np.save(f, vectors_proportionaloffset)
+        
