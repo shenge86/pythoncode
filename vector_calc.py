@@ -24,7 +24,8 @@ import numpy as np
 
 if __name__ == '__main__':    
     # Define the vector components
-    vector = np.array([3, 4, 5])
+    # vector = np.array([3, 4, 5])
+    vector = np.array([2, 2, 2])
     
     # Create another vector in same direction with different length (magnitude)
     mean = np.linalg.norm(vector)
@@ -100,13 +101,6 @@ if __name__ == '__main__':
     # note this is NOT based on unit vector but the vector itself    
     vectors_proportionaloffset      = vector * magnitude_proportional_matrix
     
-    #%% Now add transverse direction
-    threesigma_transpose = 1.0
-    sigma = threesigma_transpose/3
-    print('Creating transverse fixed magnitude offsets with three sigma: ', threesigma_transpose)
-    
-    
-    
     #%% Combined vector and histogram plot    
     vectors_totalerror = vectors_fixedoffset + vectors_proportionaloffset
     vectors            = vector + vectors_totalerror
@@ -147,6 +141,43 @@ if __name__ == '__main__':
     
     # Show the plot
     plt.show()
+    
+    #%% Now add transverse direction
+    ################################
+    threesigma_transpose = 3.0
+    sigma = threesigma_transpose/3
+    print('Creating transverse fixed magnitude offsets with three sigma: ', threesigma_transpose)
+    
+    a1, a2   = 1,1
+    u1,u2,u3 = vector_unit
+    a3       = -(u1+u2)/u3
+    
+    # normalize a and apply cross product to get both axes of this plane which circle lies
+    a      = np.array([a1,a2,a3])
+    a_unit = a / np.linalg.norm(a)
+    b      = np.cross(a_unit, vector_unit)
+    b1, b2, b3 = b
+    
+    # generate randomized magnitude based on 3 sigma distribution
+    rs = np.random.normal(0, sigma, n)    
+    
+    ## just test with one of them and see if a circle is drawn
+    c1, c2, c3 = vectors[0]
+    r = rs[0]
+    
+    num_interpol = 50
+    x_theta = np.zeros(num_interpol)
+    y_theta = np.zeros(num_interpol)
+    z_theta = np.zeros(num_interpol)
+    for i,theta in enumerate(np.linspace(0,2*np.pi,num_interpol)):
+        x_theta[i] = c1 + r*np.cos(theta)*a1 + r*np.sin(theta)*b1
+        y_theta[i] = c2 + r*np.cos(theta)*a2 + r*np.sin(theta)*b2
+        z_theta[i] = c3 + r*np.cos(theta)*a3 + r*np.sin(theta)*b3
+    
+    # need to add unit test here to calculate distance to the end vector
+    # see if it adds up to a constant value
+    print('to do...')
+    
     #%% Create a figure
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -174,10 +205,13 @@ if __name__ == '__main__':
     ax.quiver(X, Y, Z, U, V, W, cmap='viridis', array=colors)
     # ax.quiver(X, Y, Z, U, V, W)
     
+    # Plot circle of points (only for tests!!)
+    ax.scatter(x_theta,y_theta,z_theta,c='r',marker='o')
+    
     # Set the limits of the plot
-    ax.set_xlim([0, 5])
-    ax.set_ylim([0, 5])
-    ax.set_zlim([0, 5])
+    ax.set_xlim([0, max(vectors[:,0])])
+    ax.set_ylim([0, max(vectors[:,1])])
+    ax.set_zlim([0, max(vectors[:,2])])
     
     # Set labels
     ax.set_xlabel('X')
