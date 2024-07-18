@@ -25,7 +25,7 @@ import numpy as np
 if __name__ == '__main__':    
     # Define the vector components
     # vector = np.array([3, 4, 5])
-    vector = np.array([2, 2, 2])
+    vector = np.array([10, 0, 0])
     
     # Create another vector in same direction with different length (magnitude)
     mean = np.linalg.norm(vector)
@@ -144,13 +144,22 @@ if __name__ == '__main__':
     
     #%% Now add transverse direction
     ################################
-    threesigma_transpose = 3.0
+    threesigma_transpose = 9.0
     sigma = threesigma_transpose/3
     print('Creating transverse fixed magnitude offsets with three sigma: ', threesigma_transpose)
     
-    a1, a2   = 1,1
+    ## create 2 axes on a plane perpendicular to unit vector (nominal)
     u1,u2,u3 = vector_unit
-    a3       = -(u1+u2)/u3
+    
+    if u3 != 0:
+        # solution when solving dot product a dot u = 0 and assuming a1 = a2 = 1
+        a1, a2   = 1,1
+        a3       = -(u1+u2)/u3
+    else:
+        # this will mean z-axis of original vector is 0. It is flat on x-y plane
+        # set a vector to be just the z-axis
+        a1, a2 = 0, 0
+        a3 = 1
     
     # normalize a and apply cross product to get both axes of this plane which circle lies
     a      = np.array([a1,a2,a3])
@@ -158,11 +167,13 @@ if __name__ == '__main__':
     b      = np.cross(a_unit, vector_unit)
     b1, b2, b3 = b
     
-    # generate randomized magnitude based on 3 sigma distribution
-    rs = np.random.normal(0, sigma, n)    
+    ## generate randomized magnitude based on 3 sigma distribution
+    # absolute value is needed since otherwise might be negative
+    rs = np.abs(np.random.normal(0, sigma, n))
     
     ## just test with one of them and see if a circle is drawn
-    c1, c2, c3 = vectors[0]
+    vector_lateral = vectors[0]
+    c1, c2, c3 = vector_lateral
     r = rs[0]
     
     num_interpol = 50
@@ -174,9 +185,26 @@ if __name__ == '__main__':
         y_theta[i] = c2 + r*np.cos(theta)*a2 + r*np.sin(theta)*b2
         z_theta[i] = c3 + r*np.cos(theta)*a3 + r*np.sin(theta)*b3
     
-    # need to add unit test here to calculate distance to the end vector
+    #%% need to add unit test here to calculate distance to the end vector
     # see if it adds up to a constant value
-    print('to do...')
+    print('Test to see distance to end vector add up the same value.')
+    # check magnitudes
+    vector_lateral_magnitude = np.linalg.norm(vector_lateral)
+    magnitudetocheck = np.sqrt(vector_lateral_magnitude**2 + r**2)
+    
+    vectors_tocircle = np.zeros([len(x_theta),3])
+    for i,(x,y,z) in enumerate(zip(x_theta, y_theta, z_theta)):
+        vectors_tocircle[i] = [c1+x, c2+y , c3+z]
+        print(vectors_tocircle[i])
+        vectors_tocircle_magnitude = np.linalg.norm(vectors_tocircle[i])
+        print(vectors_tocircle_magnitude)
+        print('Difference between this magnitude and the magnitude to check: ', vectors_tocircle_magnitude - magnitudetocheck)
+        
+
+    
+    
+    
+    #%% add the tranverse part to the lateral part
     
     #%% Create a figure
     fig = plt.figure()
@@ -208,10 +236,10 @@ if __name__ == '__main__':
     # Plot circle of points (only for tests!!)
     ax.scatter(x_theta,y_theta,z_theta,c='r',marker='o')
     
-    # Set the limits of the plot
-    ax.set_xlim([0, max(vectors[:,0])])
-    ax.set_ylim([0, max(vectors[:,1])])
-    ax.set_zlim([0, max(vectors[:,2])])
+    # Set the limits of the plot. Plus 1 to make sure not zero
+    ax.set_xlim([0, max(vectors[:,0])+1])
+    ax.set_ylim([0, max(vectors[:,1])+1])
+    ax.set_zlim([0, max(vectors[:,2])+1])
     
     # Set labels
     ax.set_xlabel('X')
