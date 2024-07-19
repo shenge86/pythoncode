@@ -7,6 +7,7 @@ Created on Wed Jun 26 19:54:48 2024
 @description:
     
     Plots out different vectors according to specifications.
+    Vector is summation of lateral (along the nominal vector direction) and transverse direction (perpendicular to nominal vector).
     
 @version:
     1.1
@@ -31,10 +32,10 @@ if __name__ == '__main__':
     mean = np.linalg.norm(vector)
     vector_unit = vector / mean
     
-    try:
-        n = sys.argv[1]
-    except:
-        # number of randomized vectors
+    # number of randomized vectors
+    if '-n' in sys.argv:
+        n = sys.argv[sys.argv.index('-n') + 1]
+    else:
         n = input('Enter number of randomized vectors to use: ')
     n = int(n)
     
@@ -46,6 +47,11 @@ if __name__ == '__main__':
     if output[-4:] != '.npy':
         print('Appending .npy extension to file')
         output += '.npy'
+        
+    if '-display' in sys.argv:
+        display = True
+    else:
+        display = False
         
     output_folder = 'output_vectors'
     #%% Create fixed magnitude offsets (resolution error)
@@ -120,27 +126,28 @@ if __name__ == '__main__':
         assert np.allclose(vector_normalized,vector_unit,atol=1e-6)
     
     #%%
-    # Create the histogram
-    # plt.hist(vectors, bins=50, alpha=0.75, color='blue', edgecolor='black')
-    plt.hist(vectors_magnitudes, bins=50, alpha=0.75)
-    
-    # Add labels and title
-    plt.xlabel('Vector Magnitude')
-    plt.ylabel('Frequency')
-    plt.title(f'Histogram of Normal Distribution (3-Sigma)\nMean: {vectors_magnitudes_mean} / Std: {vectors_magnitudes_std}')
-    
-    # Add a vertical line for the mean
-    # cannot use the original vector magnitude as mean since adding multiple distributions
-    # changes what the mean of the combined distribution might be
-    plt.axvline(vectors_magnitudes_mean, color='red', linestyle='dashed', linewidth=2)
-    
-    # Add vertical lines for 1-sigma, 2-sigma, and 3-sigma
-    for i in range(1, 4):
-        plt.axvline(vectors_magnitudes_mean + i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
-        plt.axvline(vectors_magnitudes_mean - i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
-    
-    # Show the plot
-    plt.show()
+    if display:
+        # Create the histogram
+        # plt.hist(vectors, bins=50, alpha=0.75, color='blue', edgecolor='black')
+        plt.hist(vectors_magnitudes, bins=50, alpha=0.75)
+        
+        # Add labels and title
+        plt.xlabel('Vector Magnitude')
+        plt.ylabel('Frequency')
+        plt.title(f'Histogram of Normal Distribution (3-Sigma)\nMean: {vectors_magnitudes_mean} / Std: {vectors_magnitudes_std}')
+        
+        # Add a vertical line for the mean
+        # cannot use the original vector magnitude as mean since adding multiple distributions
+        # changes what the mean of the combined distribution might be
+        plt.axvline(vectors_magnitudes_mean, color='red', linestyle='dashed', linewidth=2)
+        
+        # Add vertical lines for 1-sigma, 2-sigma, and 3-sigma
+        for i in range(1, 4):
+            plt.axvline(vectors_magnitudes_mean + i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
+            plt.axvline(vectors_magnitudes_mean - i*vectors_magnitudes_std, color='green', linestyle='dashed', linewidth=1)
+        
+        # Show the plot
+        plt.show()
     
     #%% Now add transverse direction
     ################################
@@ -171,10 +178,15 @@ if __name__ == '__main__':
     # absolute value is needed since otherwise might be negative
     rs = np.abs(np.random.normal(0, sigma, n))
     
+    #%%
+    iii = 0
     ## just test with one of them and see if a circle is drawn
-    vector_lateral = vectors[0]
+    vector_lateral = vectors[iii]
+    print('Initial vector along nominal vector direction (before adding transverse component: ', vector_lateral)
     c1, c2, c3 = vector_lateral
-    r = rs[0]
+    r = rs[iii]
+    
+    print('Radius: ', r)
     
     num_interpol = 50
     x_theta = np.zeros(num_interpol)
@@ -194,16 +206,13 @@ if __name__ == '__main__':
     
     vectors_tocircle = np.zeros([len(x_theta),3])
     for i,(x,y,z) in enumerate(zip(x_theta, y_theta, z_theta)):
-        vectors_tocircle[i] = [c1+x, c2+y , c3+z]
+        vectors_tocircle[i] = [x,y,z]
         print(vectors_tocircle[i])
         vectors_tocircle_magnitude = np.linalg.norm(vectors_tocircle[i])
         print(vectors_tocircle_magnitude)
         print('Difference between this magnitude and the magnitude to check: ', vectors_tocircle_magnitude - magnitudetocheck)
-        
+        assert(np.allclose(vectors_tocircle_magnitude, magnitudetocheck))
 
-    
-    
-    
     #%% add the tranverse part to the lateral part
     
     #%% Create a figure
