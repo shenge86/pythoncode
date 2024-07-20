@@ -18,10 +18,57 @@ Created on Wed Jun 26 19:54:48 2024
 """
 
 import os, sys
-
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+
+class Circle:
+    num_instances = 0
+    def __init__(self, center, radius, a, b, num_interpol=50):
+        type(self).num_instances += 1
+        self.center       = center
+        self.radius       = radius
+        self.a            = a # vector that defines one axes in 3D space which circle lies on
+        self.b            = b # vector that defines another axes in 3D space which circle lies on
+        self.num_interpol = num_interpol
+        
+        # create the circle coordinates
+        self.x_theta, self.y_theta, self.z_theta = self.create_coordinates()
+        self.coordinates = np.column_stack((self.x_theta, self.y_theta, self.z_theta))
+        self.coordinates_magnitudes = np.linalg.norm(self.coordinates, axis=1)
+        
+    @property
+    def radius(self):
+        return self._radius
+    
+    @radius.setter
+    def radius(self,value):
+        if not isinstance(value, int | float) or value <= 0:
+            raise ValueError("positive number expected")
+        self._radius = value
+
+    def create_coordinates(self):
+        c1, c2, c3 = self.center
+        a1, a2, a3 = self.a
+        b1, b2, b3 = self.b
+        x_theta = np.zeros(self.num_interpol)
+        y_theta = np.zeros(self.num_interpol)
+        z_theta = np.zeros(self.num_interpol)
+        
+        for i,theta in enumerate(np.linspace(0,2*np.pi,self.num_interpol)):
+            x_theta[i] = c1 + self.radius*np.cos(theta)*a1 + self.radius*np.sin(theta)*b1
+            y_theta[i] = c2 + self.radius*np.cos(theta)*a2 + self.radius*np.sin(theta)*b2
+            z_theta[i] = c3 + self.radius*np.cos(theta)*a3 + self.radius*np.sin(theta)*b3
+        
+        return x_theta, y_theta, z_theta
+
+    def confirm_coordinates(self, magnitudetocheck):        
+        deltas = self.coordinates_magnitudes - magnitudetocheck
+        print('Difference between this magnitude and the magnitude to check: ', deltas)
+        for delta in deltas:
+            assert(np.allclose(delta, 0))
+            
+        return None
 
 if __name__ == '__main__':    
     # Define the vector components
@@ -39,9 +86,9 @@ if __name__ == '__main__':
         n = input('Enter number of randomized vectors to use: ')
     n = int(n)
     
-    try:
-        output = sys.argv[2]
-    except:
+    if '-o' in sys.argv:
+        output = sys.argv[sys.argv.index('-o') + 1]
+    else:
         output = input('Enter file name of output: ')
     
     if output[-4:] != '.npy':
@@ -178,21 +225,14 @@ if __name__ == '__main__':
     # absolute value is needed since otherwise might be negative
     rs = np.abs(np.random.normal(0, sigma, n))
     
-    #%%    
+    #%%
+    circles = [] # empty list to be populated with circle objects
     for (vector_lateral, r) in zip(vectors, rs):    
-        print('Initial vector along nominal vector direction (before adding transverse component: ', vector_lateral)
-        c1, c2, c3 = vector_lateral        
-        
+        print('Initial vector along nominal vector direction (before adding transverse component: ', vector_lateral)            
         print('Radius: ', r)
         
-        num_interpol = 50
-        x_theta = np.zeros(num_interpol)
-        y_theta = np.zeros(num_interpol)
-        z_theta = np.zeros(num_interpol)
-        for i,theta in enumerate(np.linspace(0,2*np.pi,num_interpol)):
-            x_theta[i] = c1 + r*np.cos(theta)*a1 + r*np.sin(theta)*b1
-            y_theta[i] = c2 + r*np.cos(theta)*a2 + r*np.sin(theta)*b2
-            z_theta[i] = c3 + r*np.cos(theta)*a3 + r*np.sin(theta)*b3
+        circle0 = Circle(vector_lateral,r,a,b)
+        x_theta, y_theta, z_theta = circle0.create_coordinates()
         
         # need to add unit test here to calculate distance to the end vector
         # see if it adds up to a constant value
@@ -201,15 +241,9 @@ if __name__ == '__main__':
         vector_lateral_magnitude = np.linalg.norm(vector_lateral)
         magnitudetocheck = np.sqrt(vector_lateral_magnitude**2 + r**2)
         
-        vectors_tocircle = np.zeros([len(x_theta),3])
-        for i,(x,y,z) in enumerate(zip(x_theta, y_theta, z_theta)):
-            print('Circle #: ', i)
-            vectors_tocircle[i] = [x,y,z]
-            print(vectors_tocircle[i])
-            vectors_tocircle_magnitude = np.linalg.norm(vectors_tocircle[i])
-            print(vectors_tocircle_magnitude)
-            print('Difference between this magnitude and the magnitude to check: ', vectors_tocircle_magnitude - magnitudetocheck)
-            assert(np.allclose(vectors_tocircle_magnitude, magnitudetocheck))
+        circle0.confirm_coordinates(magnitudetocheck)
+        
+        circles.append(circle0)
 
     #%% add the tranverse part to the lateral part
     
@@ -241,7 +275,8 @@ if __name__ == '__main__':
     # ax.quiver(X, Y, Z, U, V, W)
     
     # Plot circle of points (only for tests!!)
-    ax.scatter(x_theta,y_theta,z_theta,c='r',marker='o')
+    for circle in circles:
+        ax.scatter(circle.x_theta,circle.y_theta,circle.z_theta,c='r',marker='o')
     
     # Set the limits of the plot. Plus 1 to make sure not zero
     ax.set_xlim([0, max(vectors[:,0])+1])
