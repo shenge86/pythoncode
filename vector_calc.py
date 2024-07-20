@@ -178,40 +178,38 @@ if __name__ == '__main__':
     # absolute value is needed since otherwise might be negative
     rs = np.abs(np.random.normal(0, sigma, n))
     
-    #%%
-    iii = 0
-    ## just test with one of them and see if a circle is drawn
-    vector_lateral = vectors[iii]
-    print('Initial vector along nominal vector direction (before adding transverse component: ', vector_lateral)
-    c1, c2, c3 = vector_lateral
-    r = rs[iii]
-    
-    print('Radius: ', r)
-    
-    num_interpol = 50
-    x_theta = np.zeros(num_interpol)
-    y_theta = np.zeros(num_interpol)
-    z_theta = np.zeros(num_interpol)
-    for i,theta in enumerate(np.linspace(0,2*np.pi,num_interpol)):
-        x_theta[i] = c1 + r*np.cos(theta)*a1 + r*np.sin(theta)*b1
-        y_theta[i] = c2 + r*np.cos(theta)*a2 + r*np.sin(theta)*b2
-        z_theta[i] = c3 + r*np.cos(theta)*a3 + r*np.sin(theta)*b3
-    
-    #%% need to add unit test here to calculate distance to the end vector
-    # see if it adds up to a constant value
-    print('Test to see distance to end vector add up the same value.')
-    # check magnitudes
-    vector_lateral_magnitude = np.linalg.norm(vector_lateral)
-    magnitudetocheck = np.sqrt(vector_lateral_magnitude**2 + r**2)
-    
-    vectors_tocircle = np.zeros([len(x_theta),3])
-    for i,(x,y,z) in enumerate(zip(x_theta, y_theta, z_theta)):
-        vectors_tocircle[i] = [x,y,z]
-        print(vectors_tocircle[i])
-        vectors_tocircle_magnitude = np.linalg.norm(vectors_tocircle[i])
-        print(vectors_tocircle_magnitude)
-        print('Difference between this magnitude and the magnitude to check: ', vectors_tocircle_magnitude - magnitudetocheck)
-        assert(np.allclose(vectors_tocircle_magnitude, magnitudetocheck))
+    #%%    
+    for (vector_lateral, r) in zip(vectors, rs):    
+        print('Initial vector along nominal vector direction (before adding transverse component: ', vector_lateral)
+        c1, c2, c3 = vector_lateral        
+        
+        print('Radius: ', r)
+        
+        num_interpol = 50
+        x_theta = np.zeros(num_interpol)
+        y_theta = np.zeros(num_interpol)
+        z_theta = np.zeros(num_interpol)
+        for i,theta in enumerate(np.linspace(0,2*np.pi,num_interpol)):
+            x_theta[i] = c1 + r*np.cos(theta)*a1 + r*np.sin(theta)*b1
+            y_theta[i] = c2 + r*np.cos(theta)*a2 + r*np.sin(theta)*b2
+            z_theta[i] = c3 + r*np.cos(theta)*a3 + r*np.sin(theta)*b3
+        
+        # need to add unit test here to calculate distance to the end vector
+        # see if it adds up to a constant value
+        print('Test to see distance to end vector add up the same value.')
+        # check magnitudes
+        vector_lateral_magnitude = np.linalg.norm(vector_lateral)
+        magnitudetocheck = np.sqrt(vector_lateral_magnitude**2 + r**2)
+        
+        vectors_tocircle = np.zeros([len(x_theta),3])
+        for i,(x,y,z) in enumerate(zip(x_theta, y_theta, z_theta)):
+            print('Circle #: ', i)
+            vectors_tocircle[i] = [x,y,z]
+            print(vectors_tocircle[i])
+            vectors_tocircle_magnitude = np.linalg.norm(vectors_tocircle[i])
+            print(vectors_tocircle_magnitude)
+            print('Difference between this magnitude and the magnitude to check: ', vectors_tocircle_magnitude - magnitudetocheck)
+            assert(np.allclose(vectors_tocircle_magnitude, magnitudetocheck))
 
     #%% add the tranverse part to the lateral part
     
