@@ -37,10 +37,34 @@ class Friend:
           raise ValueError("Phone must be a positive integer.")
       self._phone = value
 
+    @property
+    def onlist_bool(self):
+        return "True" if self.onlist else "False"
+
+def return_bool(value):
+    return "True" if value else "False"
+
 if __name__ == '__main__':
     print('Friendship list...')
     friends = []
-    friends.append(Friend('Justin Yeung', 'Body and Brain', True))
+    friends.append(Friend('Justin Yeung', 'UT Health MPH Student', True))
+    friends.append(Friend('Ben ?', 'Nurse', True))
+    friends.append(Friend('John Graves', 'Intuitive Machines', True))
+    friends.append(Friend('Evan Zeigmann', 'St. Thomas counselor student', True))
+    friends.append(Friend('Megan Finkel', 'Indiana University Russian Slavic Studies PhD student', True))
+    friends.append(Friend('Lindsay Nichols', '?', True))
+    friends.append(Friend('Gina Lowry', 'Former teacher; now seeking assistant principal position', True))
+    friends.append(Friend('Alicia Baker', 'Jacobs / NASA', True))
+    friends.append(Friend('Jim Boyd', 'Intuitive Machines', True))
+    friends.append(Friend('Sam Welsh', 'Intuitive Machines', True))
+    friends.append(Friend('Michelle Free', '?', True))
+    friends.append(Friend('Jim Temple', 'Retired', True))
+    friends.append(Friend('Shen Ge', 'Intuitive Machines', True, 8328082371))
+    friends.append(Friend('Melissa Hong Ge', '?', True))
+    friends.append(Friend('Yongfu Ge', '?'))
     
+    print(f"{'Name':<20} {'Affiliation':<60} {'Onlist':10} {'Phone':<9}")
     for friend in friends:
-        print(friend)
+        boolvalue = return_bool(friend.onlist)
+        print(f"{friend.name:<20} {friend.affiliation:<60} {friend.onlist_bool:10} {friend.phone:<9}")
+        # print(friend)
