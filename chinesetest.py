@@ -124,12 +124,15 @@ words = { 1: ('上司','superior'),
          1015: ('靠山吃山，靠水吃水','make use of local resources'),
          1016: ('一个天南，一个地北','to live miles apart'),
          1017: ('今朝有酒今朝醉','live in the moment'),
+         1018: ('近朱者赤，近墨者黑','those who handle cinninbar are stained red while those who work with ink are stained black; you are the product of your environment' ),
          2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.'),
          2001: ('一蟹不如一蟹','one crab is no better than the other; worse and worse candidates'),
          2002: ('大姑娘坐花轿——头一回','big girl rides flower carriage--first time; a special first time occurence'),
          5000: ('伦敦西区','London West End',words5000),
          5001: ('恐怖小店','Little Shop of Horrors'),
          }
+
+keys_words = list(words.keys())
 
 def jumpword(nextorrandom):
     if nextorrandom in ['next','n','下','1']:
@@ -193,8 +196,42 @@ if __name__ == '__main__':
         temp = iter(words)
         word_index = next(temp,None)
     
-        while True:
-            chooseword = input(f'Please type the Chinese for: {words[word_index][1]}: ')
+        while True:            
+            print(f'English translation as such:\n{words[word_index][1]}: ')
+            
+            #%%
+            list_choices = ['a', 'b', 'c', 'd']
+            random.shuffle(list_choices) # shuffles them
+            # create dictionary of choices
+            target_value = words[word_index][0]
+            dict_choices = {list_choices[0]: target_value,
+                            list_choices[1]: words[random.choice(keys_words)][0],
+                            list_choices[2]: words[random.choice(keys_words)][0],
+                            list_choices[3]: words[random.choice(keys_words)][0],
+                            }
+            # list_choices = list(dict_choices.items())
+            # random.shuffle(list_choices)
+            # dict_choices = dict(list_choices)
+            
+            correct_choice = next((key for key, value in dict_choices.items() if value == target_value), None)
+
+
+           #%%
+            print('''
+     ===============================================================
+                Four possibilities to choose from for this test:
+            ''')
+            
+            for key in sorted(dict_choices.keys()):
+                print(f"\t\t{key}: {dict_choices[key]}")
+            print('''
+    ===============================================================
+            ''')
+            
+            chooseword = input('Enter the choice among these: ')
+            
+            
+            #%%
             if chooseword in ['give up','gu','next']:
                 print('Answer (答案): ')
                 value = words[word_index]
@@ -211,11 +248,11 @@ if __name__ == '__main__':
                 continue
             elif chooseword in ['quit','q']:
                 print('Quitting! 退出！')
-                break
-            elif chooseword not in [words[word_index][0]]:
-                print('You are incorrect! Try again. 错误！请再次试试。')
-                continue
-            else:
+                break            
+            elif chooseword.lower() in correct_choice:
                 print('Correct! Moving to next word. 正确！继续下个词。')
                 word_index = jumpword('next')
+                continue
+            else:
+                print('You are incorrect! Try again. 错误！请再次试试。')
                 continue
