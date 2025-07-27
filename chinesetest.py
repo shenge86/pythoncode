@@ -177,26 +177,47 @@ if __name__ == '__main__':
                 continue
             
     else:
-        print('Chinese Dictionary Tester')
-        print('If you see blanks please type as follows in command line: ')
-        print('chcp 936')
-        for key,value in words.items():
-            print('{:<5} | {:口<10} | {}'.format(key,value[0],value[1]))
-            if len(value) > 2:
-                for k,v in value[2].items():
-                    print(k+': ')
-                    print(v[0])
-                    print(v[1])
-                print('===================================================')
+        print('======================LANGUAGE LEARNER===============================')
+        print('''In this world, language can hold all keys. As you approach the final throne, 
+              you are asked a series of language questions.
+              
+              If you can answer them, you will pass the test.
+              Would you like the easy route with no rewards and just practice?
+              Would you like the hard route where death is possible?
+              ''')
+        # print('If you see blanks please type as follows in command line: ')
+        # print('chcp 936')
+        # for key,value in words.items():
+        #     print('{:<5} | {:口<10} | {}'.format(key,value[0],value[1]))
+        #     if len(value) > 2:
+        #         for k,v in value[2].items():
+        #             print(k+': ')
+        #             print(v[0])
+        #             print(v[1])
+        #         print('===================================================')
+        play_mode = input('You reply as such: ')
+        
+        if play_mode.lower() in ['hard', 'h', 'reward']:
+            play_mode = 'hard'
+        else:
+            play_mode = 'easy'
+        
+        print(f'You have chosen the {play_mode} mode. You have the possibility of ending this game early if you get too many wrong.')
+        score = 0        
     
-        print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
-        print('You can also type in quit to exit the program.')
-        print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
-        print('你也可以输入quit退出程序。')
+        # print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
+        # print('You can also type in quit to exit the program.')
+        # print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
+        # print('你也可以输入quit退出程序。')
         temp = iter(words)
         word_index = next(temp,None)
     
-        while True:            
+        while True:
+            print('Your current score is ', score)
+            if score < -10 and play_mode == 'hard':
+                print('You have gotten too many questions wrong. You have failed!')
+                break
+            
             print(f'English translation as such:\n{words[word_index][1]}: ')
             
             #%%
@@ -217,8 +238,9 @@ if __name__ == '__main__':
 
 
            #%%
-            print('''
+            print(f'''
      ===============================================================
+                {play_mode.upper()} MODE ACTIVE
                 Four possibilities to choose from for this test:
             ''')
             
@@ -251,8 +273,12 @@ if __name__ == '__main__':
                 break            
             elif chooseword.lower() in correct_choice:
                 print('Correct! Moving to next word. 正确！继续下个词。')
+                score += 10
+                print('Current score: ', score)
                 word_index = jumpword('next')
                 continue
             else:
                 print('You are incorrect! Try again. 错误！请再次试试。')
+                score -= 5
+                print('Current score: ', score)
                 continue
