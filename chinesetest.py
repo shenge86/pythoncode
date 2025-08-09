@@ -8,6 +8,7 @@ References:
 Version History:
     v1.1 August 2025:
         - Add tkinter for popugup GUI select options
+        - Gamify the heck out of it with Creature class and attack and block options.
     
     V1.0 July 2025:
         - Create initial 'game' which is flashcard scoring with points
@@ -15,6 +16,8 @@ Version History:
 '''
 import sys
 import random
+
+import pandas as pd
 
 import tkinter as tk
 
@@ -47,107 +50,42 @@ words190 = {'Pronouniciation': ('Túbù lǚxíng',''),
 words192 = {'Alternative': ('吸脂',''),
             'Example 1': ('我想她做过吸脂手术和双眼皮手术。','I think she has had liposuction and double eyelid surgery.')}
 
-words195 = {'Example 1': ('The theory is too difficult to understand, can you elaborate on it?','这个理论太深奥了, 您能不能讲得通透一点?'),
-            'Example 2': ('The sky was changing from translucent blue to thicker grey.','天空由通透的湛蓝色变成了暗灰色。'),
-            'Example 3': ('Put each object in front of the lamp . which one is the most transparent', '将物件放在灯座，看看哪一件通透能力最强？')
+words195 = {'Example 1': ('这个理论太深奥了, 您能不能讲得通透一点?','The theory is too difficult to understand, can you elaborate on it?'),
+            'Example 2': ('天空由通透的湛蓝色变成了暗灰色。','The sky was changing from translucent blue to thicker grey.'),
+            'Example 3': ('将物件放在灯座，看看哪一件通透能力最强？','Put each object in front of the lamp . which one is the most transparent')
             }
 
-words204 = {'Example 1': ('当主角生病时，替补终于得到了第一次大好机会。')}
+words204 = {'Example 1': ('当主角生病时，替补终于得到了第一次大好机会。', 'When the star was taken ill the understudy finally got her first Big Break')}
 
 words5000= {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
 
-words = { 1: ('上司','superior'),
-          2: ('顾虑','concern; misgivings'),
-          3: ('罕见','rare; seldomly seen'),
-          4: ('惯用语','idiom'),
-          5: ('奋勇','courageously'),
-          6: ('夹板','splint'),
-          7: ('焦虑','anxiety',words7),
-          8: ('茫然','at a loss',words8),
-          9: ('自白','confession'),
-         10: ('真挚','sincere (zhēnzhì)'),
-         11: ('坠落','fall;drop'),
-         12: ('陈词','statement'),
-         13: ('地平线','horizon'),
-         14: ('纳闷','wondered (in a perplexed way)',words14),
-         15: ('人道主义','humanism'),
-         16: ('膈应','【方言】指讨厌、令人不舒服，但未达到要呕吐的程度。更多的指的是心理上的不舒服。'),
-         17: ('腻歪','【北方方言】1.因次数过多或时间过长而感觉厌烦 2.厌恶 3.无聊 4.一些情侣之间比较亲昵的事，说一些亲昵的话'),
-         18: ('预算','budget'),
-         19: ('关张','close down; go out of business'),
-         100: ('接种','vaccinate'),
-         101: ('阴性','negative(medical)'),
-         102: ('义母','stepmother'),
-         103: ('遗产','inheritance'),
-         104: ('刻毒','spiteful; malicious'),
-         105: ('百老汇','Broadway'),
-         106: ('大厦','big building'),
-         111: ('甲状','thyroid'),
-         115: ('床单','bedsheet'),
-         122: ('外卖','takeout',words122),
-         124: ('关节炎','arthritis'),
-         134: ('预示','foreshadow'),
-         135: ('务必','must; be sure to'),
-         147: ('分别','1.part; leave each other 2.distinguish;differentiate'),
-         161: ('将就','make do with; put up with'),
-         166: ('造诣','academic or artistic attainments'),
-         173: ('介入','intervene; interpose; get involved'),
-         174: ('历历在目','visible before the eyes; come clearly into view'),
-         175: ('一笑置之','dismiss with a laugh; chuckle over at something'),
-         186: ('短语','phrase'),
-         187: ('顺时针','clockwise'),
-         188: ('逆时针','counterclockwise'),
-         189: ('远足','hiking'),
-         190: ('徒步旅行','trekking',words190),
-         191: ('贬义词','derogatory term'),
-         192: ('抽脂','liposuction',words192),
-         193: ('地标','landmark'),
-         194: ('壁画','mural'),
-         195: ('通透','penetrating',words195),
-         196: ('弹幕','danmaku; bullet curtain (subtitle system in online video platforms where comments shoot across the screen)'),
-         197: ('大方','generous'),
-         198: ('吝啬','stingy;miserly'),
-         199: ('吝啬鬼','stingy person'),
-         200: ('谋生','means of living'),
-         201: ('小龙虾','crawfish'),
-         202: ('试镜','audition'),
-         203: ('回拨','callback'),
-         204: ('替补','substitute'),
-         205: ('替角','understudy'),
-         206: ('剧作家','playwright'),
-         207: ('二维码','QR code'),
-         208: ('支点','fulcrum'),
-         209: ('无穷','endless'),
-         210: ('受害者','victim'),
-         211: ('严苛','harsh'),
-         1000: ('旧地重游','Revisit a familiar place; return to old haunts'),
-         1001: ('物是人非','The scenery remains the same but the people are changed. Things are unchanged but the people are gone.'),
-         1002: ('劳逸结合','Strike a proper balance between work and rest.'),
-         1003: ('劳逸不均','Uneven allocation of work and rest.'),
-         1004: ('损人利己','to harm others to benefit oneself; benefit oneself at the expense of others'),
-         1005: ('损人不利己','to harm others without benefiting oneself'),
-         1006: ('吃力不讨好','work hard but get little result; do a hard but thankless job'),
-         1007: ('家喻户晓','known to every household; widely known'),
-         1008: ('说一不二','stand by one\'s word'),
-         1009: ('开源节流','increase income and reduce expenditure; tap new supply and reduce consumption'),
-         1010: ('志同道合','cherish same ideals and follow same path; have a common goal'),
-         1011: ('言多必失','he who talks much is prone to error'),
-         1012: ('下不为例','not to be taaken as a precedent; not to be repeated'),
-         1013: ('麻木不仁','apathetic; insensitive; unfeeling'),
-         1014: ('急中生智','think of brilliant plan in emergency'),
-         1015: ('靠山吃山，靠水吃水','make use of local resources'),
-         1016: ('一个天南，一个地北','to live miles apart'),
-         1017: ('今朝有酒今朝醉','live in the moment'),
-         1018: ('近朱者赤，近墨者黑','those who handle cinninbar are stained red while those who work with ink are stained black; you are the product of your environment' ),
-         2000: ('赵大妈','Person who goes around and gets into other people\'s business. Loves to talk to people.'),
-         2001: ('一蟹不如一蟹','one crab is no better than the other; worse and worse candidates'),
-         2002: ('大姑娘坐花轿——头一回','big girl rides flower carriage--first time; a special first time occurence'),
-         5000: ('伦敦西区','London West End',words5000),
-         5001: ('恐怖小店','Little Shop of Horrors'),
-         }
+#%% I/O Functions
+def dict2csv(words,output='words.csv'):
+    '''Convert dictionary called words to DataFrame
+    and save it to csv
+    '''
+    df = pd.DataFrame(
+        [(k, v[0], v[1]) for k, v in words.items()],
+        columns=["id", "chinese", "english"]
+    )
+    
+    # Save to CSV
+    df.to_csv(output, index=False, encoding='utf-8-sig')
+    return df
 
-keys_words = list(words.keys())
+def csv2dict(filename):
+    '''Ingests in csv file and converts it to a dictionary
+    where first row is key and 2 other columns are tuple values in a tuple
+    '''
+    # Read CSV file
+    df = pd.read_csv(filename)
+    
+    # Create dictionary: first column as key, next two columns as tuple
+    data_dict = dict(zip(df.iloc[:, 0], zip(df.iloc[:, 1], df.iloc[:, 2])))
+    
+    return data_dict
 
+#%% WORD JUMPS
 def jumpword(nextorrandom):
     if nextorrandom in ['next','n','下','1']:
         word_index = next(temp,None)
@@ -186,10 +124,88 @@ What do you choose, mortal?
 
 'death': 'You fail to utter the correct words of power and you are struck one more time. You burn up in a pile of ashes.',
 
+'victory': 'You have succeeded where no one else has. Truly you deserve the title of Hero.'
+
                 }
 
+#%% Gamified!
+class Creature:
+    def __init__(self, name, attack_power, health, block):
+        """
+        Initialize a Creature.
+
+        Args:
+            name (str): Name of the creature.
+            attack_power (int or float): Attack strength of the creature.
+            health (int or float): Current health points of the creature.
+            block (float): Damage reduction percentage (0 to 1).
+        """
+        self.name = name
+        self.attack_power = attack_power
+        self.health = health
+        self._block = block
+
+    @property
+    def blocked(self):
+        return self._block
+    
+    @blocked.setter
+    def blocked(self, new_value):
+        if (new_value < 0) or (new_value > 1):
+            raise ValueError('Damage reduction must be between 0 and 1')
+        self._block = new_value
+        
+    def defense_up(self):
+        if self.name == 'Dragon':
+            print(f'{self.name} has defense of {self.blocked*100:.0f}%')
+            if round(self._block,1) <= 0.5:
+                print('The dragon skin hardens as its defense increases.')                
+                self._block += 0.1
+                print(f'{self.name} now has defense of {self.blocked*100:.0f}%')
+            else:
+                self._block = 0.55 # max it can ever reach
+
+    def attack_ready(self):
+        if self.name == 'Dragon':
+            print('The dragon gets ready for another blast of terrible flames.')
+        elif self.name == 'Hero':
+            print('You steady your hands and cast another spell! You utter these words: ')
+            print(random.choice(list(words.items()))[1][0]) # random word
+
+    def attack(self, target):
+        """Attack another creature, reducing their health."""
+        if not isinstance(target, Creature):
+            raise ValueError("Target must be a Creature instance.")
+  
+        # Calculate effective damage after block reduction
+        damage = self.attack_power * (1 - target.blocked)
+        target.health -= damage
+        print(f"{self.name} attacks {target.name} for {damage:.1f} damage!")
+        print(f"{target.name} now has {target.health:.1f} health.")
+
+    def is_alive(self):
+        """Check if the creature is still alive."""
+        return self.health > 0
+    
+    def is_dead(self):
+        """Check if the creature is dead."""
+        if self.health <= 0:
+            print(f'The {self.name} is dead!')
+        return self.health <= 0
+
+    def __str__(self):
+        """String representation of the creature."""
+        return (f"{self.name} (Attack: {self.attack_power}, "
+                f"Health: {self.health}, Block: {self.blocked*100:.0f}%)")
+    
+    
+    
 #%%
 if __name__ == '__main__':
+    # instantiate dictionary of words from csv file
+    words      = csv2dict('words.csv')
+    keys_words = list(words.keys())
+    
     if '-dict' in sys.argv:
         print('Using as dictionary instead of tester...')
         
@@ -223,6 +239,12 @@ if __name__ == '__main__':
             
     else: # default option        
         print(message_dict['theintro'])
+        
+        # instantiate player
+        player = Creature("Hero", 100, 100, 0.0) # block attribute changes so set to 0 here for now
+        
+        # instantiate dragon
+        dragon = Creature("Dragon", 50, 250, 0.5) # 50% block        
         
         ##############################
         # GUI poup
@@ -263,28 +285,26 @@ if __name__ == '__main__':
             tk.messagebox.showwarning('Dragon roars', 'You will never get this treasure. Get ready to face your end!!!')
         else:
             print('Since you just want to practice and not take what is not yours, I will give you the chance to escape whenever you want.')
-        
-        score = 100 # equivalent of health here
     
-        # print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
-        # print('You can also type in quit to exit the program.')
-        # print('词汇考研！任何时候可以输入give up 或 gu 或 next 得到答案。')
-        # print('你也可以输入quit退出程序。')
         temp = iter(words)
         word_index = next(temp,None)
     
         while True:
-            print('Hitpoints: ', score)
-            if score <= 0 and play_mode == 'hard':
+            print('Hitpoints: ', player.health)
+            if player.is_dead() and play_mode == 'hard':
                 print(message_dict['death'])
                 tk.messagebox.showwarning("You have died!!!", message_dict['death'])
                 break
-            elif score < 5 and play_mode == 'hard':
+            elif player.health < 5 and play_mode == 'hard':
                 print(message_dict['dying'])
                 tk.messagebox.showwarning("You are close to dying...", message_dict['dying'])
+            elif dragon.is_dead() and play_mode == 'hard':
+                print(message_dict['victory'])
+                tk.messagebox.showwarning("You won!!!", message_dict['victory'])
+                break
                 
-            
-            question_word = f'English translation as such:\n{words[word_index][1]}: '
+            dragon.attack_ready()
+            question_word = f'You can block by uttering the magical equivalent of these words:\n{words[word_index][1]}'
             print(question_word)
             
             #%%
@@ -319,10 +339,10 @@ if __name__ == '__main__':
             ##############################
             # GUI poup
             root = tk.Tk()
-            root.title("What is the right word here to use?")
+            root.title("What is the right word to utter here to block the attack?")
             
             # Explanation label
-            tk.Label(root, text=f'Health: {score}', font=("Arial", 12)).pack(pady=(10, 5))
+            tk.Label(root, text=f'Health: {player.health}', font=("Arial", 12)).pack(pady=(10, 5))
             tk.Label(root, text=question_word, font=("Arial", 12)).pack(pady=(10, 5))
             
             # Tkinter variable for selection
@@ -347,22 +367,8 @@ if __name__ == '__main__':
             chooseword = selected_value
             
             
-            #%%
-            if chooseword in ['give up','gu','next']:
-                print('Answer (答案): ')
-                value = words[word_index]
-                print('{:<5} | {:口<10} | {}'.format(word_index,value[0],value[1]))
-                if len(value) > 2:
-                    for k,v in value[2].items():
-                        print(k+': ')
-                        print(v[0])
-                        print(v[1])
-                    print('===================================================')
-                
-                nextorrandom = input('Next word or random 顺序下个或者随机或者选挑号码? Type in next (下) or random (随) or a number （num#): ')
-                word_index = jumpword(nextorrandom)
-                continue
-            elif chooseword in ['quit','q']:                
+            #%%            
+            if chooseword in ['quit','q']:                
                 print(message_dict['flee'])
                 tk.messagebox.showinfo("Flee!!!", message_dict['flee'])
                 # print('Quitting! 退出！')
@@ -370,13 +376,19 @@ if __name__ == '__main__':
             elif chooseword.lower() in correct_choice:
                 # print('Correct! Moving to next word. 正确！继续下个词。')
                 print(message_dict['correct'])
-                score -= 5
-                # print('Current score: ', score)
+                player.blocked = 0.9
+                dragon.attack(player)      
                 word_index = jumpword('next')
+                
+                # player gets to attack
+                player.attack_ready()                
+                dragon.defense_up() # dragon defense hardens
+                player.attack(dragon)
+                
                 continue
             else:
                 # print('You are incorrect! Try again. 错误！请再次试试。')
                 print(message_dict['incorrect'])
-                score -= 50
-                # print('Current score: ', score)
+                player.blocked = 0
+                dragon.attack(player)
                 continue
