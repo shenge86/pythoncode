@@ -1,8 +1,22 @@
 '''
-Chinese test
+Chinese Test Words
+
+References:
+    Internet
+    My mom
+
+Version History:
+    v1.1 August 2025:
+        - Add tkinter for popugup GUI select options
+    
+    V1.0 July 2025:
+        - Create initial 'game' which is flashcard scoring with points
+
 '''
 import sys
 import random
+
+import tkinter as tk
 
 words7  = {'Prounciation: ': ('jiāolǜ',''),
            'Example 1': ('短短几分钟我们就忘记了焦虑与苦恼。','For a few brief minutes we forgot the anxiety and anguish.'),
@@ -144,6 +158,37 @@ def jumpword(nextorrandom):
         word_index, _ = random.choice(list(words.items()))
     return word_index
 
+#%% GUI functions
+def choose_option():
+    global selected_value
+    selected_value = choice_var.get()  # store the selected value
+    root.destroy()  # close the window
+
+#%% Information messages
+message_dict = {'theintro': '''
+MAGIC LANGUAGE APTITUDE TEST
+In this world, language can hold all keys. As you approach the final throne, 
+an ancient dragon stares back at you. The beast opens its giant maw and speaks
+in a thundering voice:
+    
+Do you truly think you can block my flaming breath?
+Very well, I can go easy on you or it can be hard.
+What do you choose, mortal?
+''',
+
+'correct': 'You blocked the flaming attack with an appropriate counterspell. You still sustain a little damage.',
+
+'incorrect': 'You mutter senseless words that did nothing to stop the flame ball from hitting your body!!',
+
+'flee': 'You flee from the scene as if a dragon is after you. You live the rest of your life a nameless nobody. You have utterly failed.',
+
+'dying': 'You feel that you are close to dying. You know that if you fail to block one more time you are gone!',
+
+'death': 'You fail to utter the correct words of power and you are struck one more time. You burn up in a pile of ashes.',
+
+                }
+
+#%%
 if __name__ == '__main__':
     if '-dict' in sys.argv:
         print('Using as dictionary instead of tester...')
@@ -176,34 +221,50 @@ if __name__ == '__main__':
                 print('Word not in the dictionary. Try again!')
                 continue
             
-    else:
-        print('======================LANGUAGE LEARNER===============================')
-        print('''In this world, language can hold all keys. As you approach the final throne, 
-              you are asked a series of language questions.
-              
-              If you can answer them, you will pass the test.
-              Would you like the easy route with no rewards and just practice?
-              Would you like the hard route where death is possible?
-              ''')
-        # print('If you see blanks please type as follows in command line: ')
-        # print('chcp 936')
-        # for key,value in words.items():
-        #     print('{:<5} | {:口<10} | {}'.format(key,value[0],value[1]))
-        #     if len(value) > 2:
-        #         for k,v in value[2].items():
-        #             print(k+': ')
-        #             print(v[0])
-        #             print(v[1])
-        #         print('===================================================')
-        play_mode = input('You reply as such: ')
+    else: # default option        
+        print(message_dict['theintro'])
+        
+        ##############################
+        # GUI poup
+        root = tk.Tk()
+        root.title("Difficulty Choose")
+        
+        # Explanation label
+        tk.Label(root, text=message_dict['theintro'], font=("Arial", 12)).pack(pady=(10, 5))
+        
+        # Tkinter variable for selection
+        choice_var = tk.StringVar(value="Easy")  # default value
+        
+        # Radio buttons
+        tk.Radiobutton(root, text="Easy", variable=choice_var, value="Easy").pack(anchor="w")
+        tk.Radiobutton(root, text="Hard", variable=choice_var, value="Hard").pack(anchor="w")        
+        
+        # Select button
+        tk.Button(root, text="Select", command=choose_option).pack(pady=10)
+        
+        # Run GUI
+        root.mainloop()
+        
+        # Use the selected value after window closes
+        print("Selected:", selected_value)
+        ##############################
+        # play_mode = input('You reply as such: ')
+        play_mode = selected_value
         
         if play_mode.lower() in ['hard', 'h', 'reward']:
             play_mode = 'hard'
-        else:
+        elif play_mode.lower() in ['easy', 'e']:
             play_mode = 'easy'
         
-        print(f'You have chosen the {play_mode} mode. You have the possibility of ending this game early if you get too many wrong.')
-        score = 0        
+        print(f'You have chosen the {play_mode} mode.')
+        
+        if play_mode == 'hard':
+            print('You will never get this treasure. Get ready to face your end!!!')
+            tk.messagebox.showwarning('Dragon roars', 'You will never get this treasure. Get ready to face your end!!!')
+        else:
+            print('Since you just want to practice and not take what is not yours, I will give you the chance to escape whenever you want.')
+        
+        score = 100 # equivalent of health here
     
         # print('Word Test! Any time you can type in give up, gu, or next to get the answer.')
         # print('You can also type in quit to exit the program.')
@@ -213,12 +274,18 @@ if __name__ == '__main__':
         word_index = next(temp,None)
     
         while True:
-            print('Your current score is ', score)
-            if score < -10 and play_mode == 'hard':
-                print('You have gotten too many questions wrong. You have failed!')
+            print('Hitpoints: ', score)
+            if score <= 0 and play_mode == 'hard':
+                print(message_dict['death'])
+                tk.messagebox.showwarning("You have died!!!", message_dict['death'])
                 break
+            elif score < 5 and play_mode == 'hard':
+                print(message_dict['dying'])
+                tk.messagebox.showwarning("You are close to dying...", message_dict['dying'])
+                
             
-            print(f'English translation as such:\n{words[word_index][1]}: ')
+            question_word = f'English translation as such:\n{words[word_index][1]}: '
+            print(question_word)
             
             #%%
             list_choices = ['a', 'b', 'c', 'd']
@@ -238,10 +305,9 @@ if __name__ == '__main__':
 
 
            #%%
-            print(f'''
-     ===============================================================
-                {play_mode.upper()} MODE ACTIVE
-                Four possibilities to choose from for this test:
+            print('''
+     ===============================================================                
+     How do you choose to reply?
             ''')
             
             for key in sorted(dict_choices.keys()):
@@ -250,7 +316,35 @@ if __name__ == '__main__':
     ===============================================================
             ''')
             
-            chooseword = input('Enter the choice among these: ')
+            ##############################
+            # GUI poup
+            root = tk.Tk()
+            root.title("What is the right word here to use?")
+            
+            # Explanation label
+            tk.Label(root, text=f'Health: {score}', font=("Arial", 12)).pack(pady=(10, 5))
+            tk.Label(root, text=question_word, font=("Arial", 12)).pack(pady=(10, 5))
+            
+            # Tkinter variable for selection
+            choice_var = tk.StringVar(value="a")  # default value
+            
+            # Radio buttons
+            for key in sorted(dict_choices.keys()):
+                tk.Radiobutton(root, text=f"{key}: {dict_choices[key]}", variable=choice_var, value=f"{key}").pack(anchor="w")
+            tk.Radiobutton(root, text="You choose to give up and abandon your quest to forever live in ignomy.", variable=choice_var, value="q").pack(anchor="w")
+            
+            # Select button
+            tk.Button(root, text="Select", command=choose_option).pack(pady=10)
+            
+            # Run GUI
+            root.mainloop()
+            
+            # Use the selected value after window closes
+            print("Selected:", selected_value)
+            ##############################    
+            
+            # chooseword = input('Enter the choice among these: ')
+            chooseword = selected_value
             
             
             #%%
@@ -268,17 +362,21 @@ if __name__ == '__main__':
                 nextorrandom = input('Next word or random 顺序下个或者随机或者选挑号码? Type in next (下) or random (随) or a number （num#): ')
                 word_index = jumpword(nextorrandom)
                 continue
-            elif chooseword in ['quit','q']:
-                print('Quitting! 退出！')
+            elif chooseword in ['quit','q']:                
+                print(message_dict['flee'])
+                tk.messagebox.showinfo("Flee!!!", message_dict['flee'])
+                # print('Quitting! 退出！')
                 break            
             elif chooseword.lower() in correct_choice:
-                print('Correct! Moving to next word. 正确！继续下个词。')
-                score += 10
-                print('Current score: ', score)
+                # print('Correct! Moving to next word. 正确！继续下个词。')
+                print(message_dict['correct'])
+                score -= 5
+                # print('Current score: ', score)
                 word_index = jumpword('next')
                 continue
             else:
-                print('You are incorrect! Try again. 错误！请再次试试。')
-                score -= 5
-                print('Current score: ', score)
+                # print('You are incorrect! Try again. 错误！请再次试试。')
+                print(message_dict['incorrect'])
+                score -= 50
+                # print('Current score: ', score)
                 continue
