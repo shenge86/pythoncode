@@ -20,45 +20,6 @@ import random
 import pandas as pd
 
 import tkinter as tk
-
-words7  = {'Prounciation: ': ('jiāolǜ',''),
-           'Example 1': ('短短几分钟我们就忘记了焦虑与苦恼。','For a few brief minutes we forgot the anxiety and anguish.'),
-           'Example 2': ('当意外事件干扰了你的生活时，你会感到焦虑吗？','Do you feel anxious when unforeseen incidents intrude on your day?'),
-           'Example 3': ('镇静剂有助于缓解焦虑所带来的不安症状。','Tranquillizers help alleviate the distressing symptoms of anxiety.'),
-           'Example 4': ('焦虑是现代人的自然状态。','Anxiety is modern man\'s natural state.'),
-           'Example 5': ('近来公众对这个问题的焦虑心情现在也许正在缓和下来。','The recent public anxiety about this issue may now be abating.')}
-
-words8  = {'Example 1': ('拥挤的人群和喧闹的噪音可能会让游客有些茫然不知所措。','Sightseers may be a little overwhelmed by the crowds and noise.'),
-           'Example 2': ('他边说话边茫然地打量着房间，心不在焉的样子。','He looked vaguely around the room as he spoke, his mind elsewhere.'),
-           'Example 3': ('我茫然地走了35分钟。',' For 35 minutes I was walking around in a daze.'),
-           'Example 4': ('她沉默了一会儿，嘴唇紧闭，眼神茫然。','She was silent for a moment, lips tight shut, eyes distant.'),
-           'Example 5': ('阿博特一脸茫然。“我没听明白，先生。”','Abbot looked blank. \"I don\'t quite follow, sir.\" '),
-           'Example 6': ('他突然改变话题，使她茫然不知所措。','His abrupt change of subject left her floundering helplessly.')}
-
-words14 = {'Pronouniciation': ('Nàmèn',''),
-           'Example 1': ('她开始纳闷他在搞什么鬼。','She began to wonder what he was playing at.'),
-           'Example 2': ('我时常纳闷她为什么要那样对待我。','I often wonder about why she treated me like that.'),
-           'Example 3': ('我纳闷为什么火鸡总是和感恩节连在一起呢?','I wonder why turkey seems to belong to Thanksgiving?')}
-
-words122 = {'Example 1': ('咱们叫份外卖吧。','Let us get a takeout.'),
-            'Example 2': ('我可以像纽约其他的康复病人一样叫外卖!','I can order delivery just like anyone else convalescing in New York!')}
-
-words190 = {'Pronouniciation': ('Túbù lǚxíng',''),
-            'Example 1': ('她自己喜欢徒步旅行和骑自行车长途旅行这样的运动方式。','Her own preferred methods of exercise are hiking and long cycle rides.'),
-            'Example 2': ('他们做了一次穿越森林的十英里徒步旅行。','They went on a ten-mile hike through the forest.')}
-
-words192 = {'Alternative': ('吸脂',''),
-            'Example 1': ('我想她做过吸脂手术和双眼皮手术。','I think she has had liposuction and double eyelid surgery.')}
-
-words195 = {'Example 1': ('这个理论太深奥了, 您能不能讲得通透一点?','The theory is too difficult to understand, can you elaborate on it?'),
-            'Example 2': ('天空由通透的湛蓝色变成了暗灰色。','The sky was changing from translucent blue to thicker grey.'),
-            'Example 3': ('将物件放在灯座，看看哪一件通透能力最强？','Put each object in front of the lamp . which one is the most transparent')
-            }
-
-words204 = {'Example 1': ('当主角生病时，替补终于得到了第一次大好机会。', 'When the star was taken ill the understudy finally got her first Big Break')}
-
-words5000= {'Details': ('伦敦西区（London\'s West End）是与纽约百老汇(Broadway)齐名的世界两大戏剧中心之一，是表演艺术的国际舞台，也是英国戏剧界的代名词。','在如此有限的区域内集中如此之多的剧院，在世界上只有纽约的百老汇可与之相比，而从历史传统来讲，西区要比百老汇悠久得多。')}
-
 #%% I/O Functions
 def dict2csv(words,output='words.csv'):
     '''Convert dictionary called words to DataFrame
