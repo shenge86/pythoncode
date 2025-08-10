@@ -20,6 +20,7 @@ import random
 import pandas as pd
 
 import tkinter as tk
+from tkinter import messagebox # weirdly have to do this in order for it to work
 #%% I/O Functions
 def dict2csv(words,output='words.csv'):
     '''Convert dictionary called words to DataFrame
@@ -144,6 +145,11 @@ class Creature:
         print(f"{self.name} attacks {target.name} for {damage:.1f} damage!")
         print(f"{target.name} now has {target.health:.1f} health.")
 
+    def yell(self):
+        if self.name == 'Dragon':
+            print('You will never get this treasure. Get ready to face your end!!!')
+            messagebox.showwarning(f'{self.name} roars!', 'You will never get this treasure. Get ready to face your end!!!')
+
     def is_alive(self):
         """Check if the creature is still alive."""
         return self.health > 0
@@ -240,28 +246,24 @@ if __name__ == '__main__':
             play_mode = 'easy'
         
         print(f'You have chosen the {play_mode} mode.')
+                
+        dragon.yell()        
         
-        if play_mode == 'hard':
-            print('You will never get this treasure. Get ready to face your end!!!')
-            tk.messagebox.showwarning('Dragon roars', 'You will never get this treasure. Get ready to face your end!!!')
-        else:
-            print('Since you just want to practice and not take what is not yours, I will give you the chance to escape whenever you want.')
-    
         temp = iter(words)
         word_index = next(temp,None)
     
         while True:
             print('Hitpoints: ', player.health)
-            if player.is_dead() and play_mode == 'hard':
+            if player.is_dead():
                 print(message_dict['death'])
-                tk.messagebox.showwarning("You have died!!!", message_dict['death'])
+                messagebox.showwarning("You have died!!!", message_dict['death'])
                 break
-            elif player.health < 5 and play_mode == 'hard':
+            elif player.health < 5:
                 print(message_dict['dying'])
-                tk.messagebox.showwarning("You are close to dying...", message_dict['dying'])
-            elif dragon.is_dead() and play_mode == 'hard':
+                messagebox.showwarning("You are close to dying...", message_dict['dying'])
+            elif dragon.is_dead():
                 print(message_dict['victory'])
-                tk.messagebox.showwarning("You won!!!", message_dict['victory'])
+                messagebox.showwarning("You won!!!", message_dict['victory'])
                 break
                 
             dragon.attack_ready()
@@ -331,7 +333,7 @@ if __name__ == '__main__':
             #%%            
             if chooseword in ['quit','q']:                
                 print(message_dict['flee'])
-                tk.messagebox.showinfo("Flee!!!", message_dict['flee'])
+                messagebox.showinfo("Flee!!!", message_dict['flee'])
                 # print('Quitting! 退出！')
                 break            
             elif chooseword.lower() in correct_choice:
