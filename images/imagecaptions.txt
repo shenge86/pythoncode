@@ -1,0 +1,14 @@
+Opening:  images\newspapergirl.jpg
+a girl sitting on the floor with a pile of newspapers
+Opening:  images\palm-tree-1.jpg
+a palm tree is in the middle of a lake
+Opening:  images\palm-tree-2.jpg
+a palm tree is growing in the middle of a park
+Opening:  images\sailor.jpg
+a woman in a blue dress and gold trim
+Opening:  images\testocr.png
+a black and white font with the words ' this is a lot of work on all types of font
+Opening:  images\girl.jpg
+a beautiful woman in tight stockings and stockings posing on a bed
+Opening:  images\whip.jpg
+a woman in a red corset with a whip
