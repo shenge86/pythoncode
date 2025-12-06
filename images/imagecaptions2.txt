@@ -1,0 +1,152 @@
+Opening: images\alexis75782626_136_d793.jpg
+('n02883205', 'bow_tie', np.float32(0.113664486))
+('n03814639', 'neck_brace', np.float32(0.07885656))
+('n03916031', 'perfume', np.float32(0.05707697))
+Opening: images\allie13234981_017_7a85.jpg
+('n03710637', 'maillot', np.float32(0.37325862))
+('n03710721', 'maillot', np.float32(0.08954303))
+('n03770439', 'miniskirt', np.float32(0.086129695))
+Opening: images\allie23233957_016_d73c.jpg
+('n06359193', 'web_site', np.float32(0.11151621))
+('n02883205', 'bow_tie', np.float32(0.110490635))
+('n04591157', 'Windsor_tie', np.float32(0.055699162))
+Opening: images\allie34401753_053_23a2.jpg
+('n03595614', 'jersey', np.float32(0.2437307))
+('n03476991', 'hair_spray', np.float32(0.13275187))
+('n04370456', 'sweatshirt', np.float32(0.12385086))
+Opening: images\allie34401753_055_d048.jpg
+('n03476991', 'hair_spray', np.float32(0.26627114))
+('n03710637', 'maillot', np.float32(0.2311893))
+('n03710721', 'maillot', np.float32(0.08501282))
+Opening: images\allie41298702_007_f473.jpg
+('n03770439', 'miniskirt', np.float32(0.1475071))
+('n04344873', 'studio_couch', np.float32(0.08465483))
+('n02787622', 'banjo', np.float32(0.07144772))
+Opening: images\allie41298702_077_aa90.jpg
+('n04209239', 'shower_curtain', np.float32(0.38081092))
+('n03594734', 'jean', np.float32(0.11015372))
+('n04136333', 'sarong', np.float32(0.071953386))
+Opening: images\Arthur Skizhali-Weiss_10735961_4981739157032_605953218_n.jpg
+('n07248320', 'book_jacket', np.float32(0.63610184))
+('n03782006', 'monitor', np.float32(0.08904769))
+('n04404412', 'television', np.float32(0.04091468))
+Opening: images\Arthur Skizhali-Weiss_10749052_4981732636869_1366925828_n.jpg
+('n03598930', 'jigsaw_puzzle', np.float32(0.43224305))
+('n03347037', 'fire_screen', np.float32(0.42535388))
+('n03998194', 'prayer_rug', np.float32(0.09678562))
+Opening: images\chloe0.jpg
+('n04584207', 'wig', np.float32(0.2350054))
+('n04599235', 'wool', np.float32(0.13140571))
+('n02963159', 'cardigan', np.float32(0.07149643))
+Opening: images\chloe1.jpg
+('n03045698', 'cloak', np.float32(0.36309636))
+('n03404251', 'fur_coat', np.float32(0.14714022))
+('n02869837', 'bonnet', np.float32(0.09694178))
+Opening: images\chloe2.jpg
+('n03534580', 'hoopskirt', np.float32(0.07666354))
+('n03710637', 'maillot', np.float32(0.06476896))
+('n03450230', 'gown', np.float32(0.05192861))
+Opening: images\chloe3.jpg
+('n04209239', 'shower_curtain', np.float32(0.14106078))
+('n03916031', 'perfume', np.float32(0.12081826))
+('n07248320', 'book_jacket', np.float32(0.083313525))
+Opening: images\chloe4.jpg
+('n04209239', 'shower_curtain', np.float32(0.30992004))
+('n04418357', 'theater_curtain', np.float32(0.25042167))
+('n03388043', 'fountain', np.float32(0.083978556))
+Opening: images\chloe5.jpg
+('n03255030', 'dumbbell', np.float32(0.345212))
+('n04493381', 'tub', np.float32(0.20631133))
+('n02808440', 'bathtub', np.float32(0.05902492))
+Opening: images\emma.jpg
+('n03710637', 'maillot', np.float32(0.3410903))
+('n02895154', 'breastplate', np.float32(0.29322022))
+('n03710721', 'maillot', np.float32(0.09095545))
+Opening: images\fumino1.jpg
+('n03584829', 'iron', np.float32(0.36526993))
+('n04209239', 'shower_curtain', np.float32(0.13528904))
+('n03127747', 'crash_helmet', np.float32(0.045701545))
+Opening: images\fumino2.jpg
+('n04317175', 'stethoscope', np.float32(0.4779032))
+('n03617480', 'kimono', np.float32(0.083171085))
+('n02769748', 'backpack', np.float32(0.0504194))
+Opening: images\fumino3.jpg
+('n04209239', 'shower_curtain', np.float32(0.20416513))
+('n04591157', 'Windsor_tie', np.float32(0.10671255))
+('n04350905', 'suit', np.float32(0.091148295))
+Opening: images\fumino4.jpg
+('n03584829', 'iron', np.float32(0.15552792))
+('n04591157', 'Windsor_tie', np.float32(0.1179771))
+('n02892767', 'brassiere', np.float32(0.05448506))
+Opening: images\fumino5.jpg
+('n03125729', 'cradle', np.float32(0.6028701))
+('n02804414', 'bassinet', np.float32(0.1430895))
+('n03584829', 'iron', np.float32(0.027551003))
+Opening: images\fumino6.jpg
+('n04507155', 'umbrella', np.float32(0.14290127))
+('n04162706', 'seat_belt', np.float32(0.102877975))
+('n03476991', 'hair_spray', np.float32(0.08464076))
+Opening: images\fumino7.jpg
+('n02883205', 'bow_tie', np.float32(0.15022135))
+('n04376876', 'syringe', np.float32(0.12657845))
+('n04591157', 'Windsor_tie', np.float32(0.11093247))
+Opening: images\fumino8.jpg
+('n03450230', 'gown', np.float32(0.23736191))
+('n03770439', 'miniskirt', np.float32(0.10660942))
+('n03534580', 'hoopskirt', np.float32(0.07837349))
+Opening: images\fumino9.jpg
+('n03770439', 'miniskirt', np.float32(0.4674621))
+('n03594734', 'jean', np.float32(0.08140008))
+('n03680355', 'Loafer', np.float32(0.0728094))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\newspapergirl.jpg
+('n03127747', 'crash_helmet', np.float32(0.26661035))
+('n04597913', 'wooden_spoon', np.float32(0.21448071))
+('n03250847', 'drumstick', np.float32(0.17162468))
+Opening: images\palm-tree-1.jpg
+('n03991062', 'pot', np.float32(0.17484954))
+('n09332890', 'lakeside', np.float32(0.14145076))
+('n03899768', 'patio', np.float32(0.10438253))
+Opening: images\palm-tree-2.jpg
+('n03991062', 'pot', np.float32(0.4082497))
+('n03899768', 'patio', np.float32(0.14243832))
+('n09332890', 'lakeside', np.float32(0.13114803))
+Opening: images\sailor.jpg
+('n02892767', 'brassiere', np.float32(0.49319082))
+('n04584207', 'wig', np.float32(0.20370717))
+('n03476991', 'hair_spray', np.float32(0.046865843))
+Opening: images\testocr.png
+('n06359193', 'web_site', np.float32(0.10030043))
+('n07565083', 'menu', np.float32(0.06552871))
+('n06785654', 'crossword_puzzle', np.float32(0.063928716))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\girl.jpg
+('n04584207', 'wig', np.float32(0.57186633))
+('n02895154', 'breastplate', np.float32(0.075009815))
+('n04074963', 'remote_control', np.float32(0.057400513))
+Opening: images\allie-3.jpg
+('n03770439', 'miniskirt', np.float32(0.33470812))
+('n03710637', 'maillot', np.float32(0.058748845))
+('n02892767', 'brassiere', np.float32(0.05166591))
+Opening: images\astronaut.jpeg
+('n07860988', 'dough', np.float32(0.58640593))
+('n07920052', 'espresso', np.float32(0.197152))
+('n04263257', 'soup_bowl', np.float32(0.022539556))
