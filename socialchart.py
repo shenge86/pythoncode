@@ -54,15 +54,15 @@ def build_social_diagram_static(nodes_list, connections, description="", title="
     
     
     # 6. Visualization
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(10, 10))
     pos = nx.spring_layout(G, k=0.5, iterations=50) # k adjusts spacing
     
     nx.draw(
         G, pos, 
         with_labels=True, 
         node_color=node_colors, 
-        node_size=2500, 
-        font_size=10, 
+        node_size=2000, 
+        font_size=3, 
         font_weight='bold', 
         edge_color="#cccccc",
         width=1.5
@@ -97,7 +97,7 @@ def build_social_diagram_full(nodes_list, connections, description="", title="So
     pos = nx.spring_layout(G, k=0.5)
     
     nx.draw(G, pos, with_labels=True, node_color=node_colors, 
-            node_size=2000, font_weight='bold', edge_color="#cccccc", ax=ax)
+            node_size=1500, font_size=8, font_weight='bold', edge_color="#cccccc", ax=ax)
 
     # 3. ADD THE TEXT BOX
     if description:
@@ -151,10 +151,12 @@ if __name__ == '__main__':
         ('Rafael T.', 'Technical'),
         ('Ryan F.', 'Technical'),
         ('Sam W.', 'Technical'),
+        ('Sam M.', 'Technical'),
         ('Michelle T.', 'Technical'),
-        ('Regina', 'Technical'),
+        ('Regina A.', 'Technical'),
         ('Glenn T.', 'Technical'),
         ('Leonard K.', 'Technical'),
+        ('Xupeng', 'Technical'),
         ('Corey', 'Unique'),
         ('Justin Y.', 'Unique'),
         ('Michelle F.', 'Unique'),
@@ -162,10 +164,13 @@ if __name__ == '__main__':
         ('Mary C.', 'Unique'),
         ('Steve K.', 'Unique'),
         ('Youssouf D.', 'Unique'),
+        ('Krista K.', 'Unique'),
+        ('Joy', 'Unique'),
     ]
     
     # Each tuple is a link between two people (nodes)
     social_connections = [
+        ('Shen Ge', 'Joy'),
         ('Shen Ge', 'Michelle F.'),
         ('Shen Ge', 'Rose'),
         ('Shen Ge', 'Alex O.'),
@@ -193,7 +198,8 @@ if __name__ == '__main__':
         ('Shen Ge', 'Yolanda M.'),
         ('Shen Ge', 'Alicia B.'),
         ('Shen Ge', 'Sam W.'),
-        ('Shen Ge', 'Regina'),
+        ('Shen Ge', 'Sam M.'),
+        ('Shen Ge', 'Regina A.'),
         ('Shen Ge', 'Glenn T.'),
         ('Shen Ge', 'Leonard K.'),
         ('Shen Ge', 'Jeanette'),
@@ -201,8 +207,14 @@ if __name__ == '__main__':
         ('Shen Ge', 'Kathy'),
         ('Shen Ge', 'Mary C.'),
         ('Kathy', 'Mary C.'),
+        ('Shen Ge', 'Xupeng'),
         ('Shen Ge', 'Steve K.'),
         ('Shen Ge', 'Youssouf D.'),
+        ('Shen Ge', 'Krista K.'),
+        ('Shen Ge', 'Julie P.'),
+        ('Youssouf D.', 'Julie P.'),
+        ('Youssouf D.', 'Krista K.'),
+        ('Julie P.', 'Krista K.'),
         ('Shen Ge', 'Gina L.'),
         ('Shen Ge', 'Walter L.'),
         ('Shen Ge', 'Daniela L.'),
@@ -219,7 +231,8 @@ if __name__ == '__main__':
         ('Michelle F.', 'Rafael T.'),
         ('Michelle F.', 'Ryan F.'),
         ('Rafael T.', 'Ryan F.'),
-        ('Alicia B.', 'Ryan F.'),
+        ('Rafael T.', 'Sam M.'),
+        ('Sam M.', 'Ryan F.'),
         ('Tony C.', 'David C.'),
         ('Joe H.', 'Justin Y.'),
         ('Eric C.', 'Justin Y.'),
