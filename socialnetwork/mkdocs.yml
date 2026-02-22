@@ -1,0 +1,13 @@
+site_name: Social Chart Docs
+
+theme:
+    name: "readthedocs"
+    #name: "material"
+
+plugins:
+    - mkdocstrings
+
+nav:
+    - index.md
+    - tutorials.md
+    - reference.md

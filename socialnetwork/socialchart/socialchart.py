@@ -2,8 +2,17 @@
 """
 Created on Sat Feb 14 22:30:02 2026
 
+Build network social chart.
+
 @author: sheng
 @name: Network Social Chart
+@version:
+    
+This module contains the following functions:
+    
+- `build_social_diagram_static` - Builds social diagram for people
+
+    
 """
 
 import networkx as nx
@@ -14,9 +23,13 @@ def build_social_diagram_static(nodes_list, connections, description="", title="
     """
     Builds and displays a social diagram.
     
-    :param nodes_list: List of tuples (Name, Group) -> [("Alice", "Admin"), ...]
-    :param connections: List of tuples (Name1, Name2) -> [("Alice", "Bob"), ...]
-    :param title: The title of the plot
+    Args:
+        nodes_list (List): of tuples (Name, Group) -> [("Alice", "Admin"), ...]
+        connections (List): of tuples (Name1, Name2) -> [("Alice", "Bob"), ...]
+        title (str): title of the plot
+        
+    Returns:
+        None
     """
     G = nx.Graph()
 
@@ -81,7 +94,7 @@ def build_social_diagram_full(nodes_list, connections, description="", title="So
     G.add_nodes_from([n[0] for n in nodes_list])
     G.add_edges_from(connections)
     
-    # 1. Setup colors
+    #%% 1. Setup colors
     palette = {
         "Unique"   : "#ff6666",   # Soft Red
         "Spiritual": "#66b3ff",   # Soft Blue
@@ -92,14 +105,17 @@ def build_social_diagram_full(nodes_list, connections, description="", title="So
     node_groups = {name: group for name, group in nodes_list}
     node_colors = [palette.get(node_groups.get(n, "Default"), palette["Default"]) for n in G.nodes()]
 
-    # 2. Visualization setup
+    #%% 2. Visualization setup
     fig, ax = plt.subplots(figsize=(12, 8))
-    pos = nx.spring_layout(G, k=0.5)
+    
+    # define the position of the nodes
+    # k = optimal distance between nodes
+    pos = nx.spring_layout(G, k=0.5) 
     
     nx.draw(G, pos, with_labels=True, node_color=node_colors, 
             node_size=1500, font_size=8, font_weight='bold', edge_color="#cccccc", ax=ax)
 
-    # 3. ADD THE TEXT BOX
+    #%% 3. ADD THE TEXT BOX
     if description:
         # Define box style
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
@@ -109,7 +125,7 @@ def build_social_diagram_full(nodes_list, connections, description="", title="So
         ax.text(0.01, 0.01, description, transform=ax.transAxes, fontsize=10,
                 verticalalignment='bottom', horizontalalignment='left', bbox=props)
 
-    # 4. Legend
+    #%% 4. Legend
     legend_elements = [Line2D([0],[0], marker='o', color='w', label=k, 
                               markerfacecolor=v, markersize=10) for k, v in palette.items()]
     ax.legend(handles=legend_elements, title="Groups", loc='upper left', bbox_to_anchor=(1, 1))
