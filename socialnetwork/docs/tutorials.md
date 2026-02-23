@@ -14,4 +14,5 @@ Ideally, this code will allow you to load anything but right now it is hardcoded
 - Avoid any distractions
 
 ## Acknowledgements
-Real Python as a helpful example.
+Real Python as a helpful example:
+[https://realpython.com/python-project-documentation-with-mkdocs/](https://realpython.com/python-project-documentation-with-mkdocs/)

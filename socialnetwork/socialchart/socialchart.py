@@ -10,8 +10,7 @@ Build network social chart.
     
 This module contains the following functions:
     
-- `build_social_diagram_static` - Builds social diagram for people
-
+- `build_social_diagram_full` - Builds social diagram for people
     
 """
 
@@ -19,80 +18,27 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-def build_social_diagram_static(nodes_list, connections, description="", title="Shen's Social Network"):
+#%%
+def build_social_diagram_full(nodes_list, connections, description="", title="Social Network"):
     """
     Builds and displays a social diagram.
     
     Args:
-        nodes_list (List): of tuples (Name, Group) -> [("Alice", "Admin"), ...]
-        connections (List): of tuples (Name1, Name2) -> [("Alice", "Bob"), ...]
+        nodes_list (List): contains 2-tuples (Name, Group) -> [("Alice", "Admin"), ...]
+        connections (List): contains 2-tuples (Name1, Name2) -> [("Alice", "Bob"), ...]
+        description (str): description of the legend
         title (str): title of the plot
         
     Returns:
         None
     """
     G = nx.Graph()
-
-    # 1. Add nodes with a 'group' attribute
-    for name, group in nodes_list:
-        G.add_node(name, group=group)
-    
-    # 2. Add edges
-    G.add_edges_from(connections)
-    
-    # 3. Define the color palette
-    # You can add more groups and colors here
-    palette = {
-        "Unique"   : "#ff6666",   # Soft Red
-        "Spiritual": "#66b3ff",   # Soft Blue
-        "Creative" : "#99ff99",   # Soft Green
-        "Technical": "#964B00",   # Brown
-        "Default": "#d9d9d9"      # Grey
-    }
-    
-    # 4. Map colors to nodes based on their group
-    # We iterate through G.nodes to ensure the color list matches the graph order
-    node_colors = []
-    for node in G.nodes():
-        group = G.nodes[node].get('group', 'Default')
-        node_colors.append(palette.get(group, palette["Default"]))
-    
-    # 5. Create the legend
-    # We create a "dummy" marker for each unique group in the palette
-    legend_elements = [
-        Line2D([0], [0], marker='o', color='w', label=group,
-               markerfacecolor=color, markersize=12)
-        for group, color in palette.items() if group != "Default"
-    ]
-    
-    
-    # 6. Visualization
-    plt.figure(figsize=(10, 10))
-    pos = nx.spring_layout(G, k=0.5, iterations=50) # k adjusts spacing
-    
-    nx.draw(
-        G, pos, 
-        with_labels=True, 
-        node_color=node_colors, 
-        node_size=2000, 
-        font_size=3, 
-        font_weight='bold', 
-        edge_color="#cccccc",
-        width=1.5
-    )
-    
-    plt.legend(handles=legend_elements, title="People Types", loc='upper left', bbox_to_anchor=(1, 1))
-    
-    plt.title(title, pad=20)
-    plt.savefig('shen_socialdiagram.png', dpi=300, bbox_inches='tight')
-    plt.show()
-    plt.close()
-
-#%%
-def build_social_diagram_full(nodes_list, connections, description="", title="Social Network"):
-    G = nx.Graph()
     G.add_nodes_from([n[0] for n in nodes_list])
-    G.add_edges_from(connections)
+    
+    try:
+        G.add_weighted_edges_from(connections)
+    except:
+        G.add_edges_from(connections)
     
     #%% 1. Setup colors
     palette = {
@@ -110,7 +56,8 @@ def build_social_diagram_full(nodes_list, connections, description="", title="So
     
     # define the position of the nodes
     # k = optimal distance between nodes
-    pos = nx.spring_layout(G, k=0.5) 
+    # pos = nx.spring_layout(G, k=0.5) 
+    pos = nx.spring_layout(G, weight='weight') 
     
     nx.draw(G, pos, with_labels=True, node_color=node_colors, 
             node_size=1500, font_size=8, font_weight='bold', edge_color="#cccccc", ax=ax)
@@ -141,12 +88,12 @@ if __name__ == '__main__':
     nodes = [
         ('Shen Ge', 'Unique'),
         ('Rose', 'Unique'),
-        ('Natalia', 'Creative'),
+        ('Natalia', 'Unique'),
         ('Adrienne', 'Creative'),
         ('Jenny B.', 'Creative'),
         ('Bucky R.', 'Creative'),
         ('Yolanda M.', 'Creative'),
-        ('Jenny', 'Creative'),
+        ('Jenny A.', 'Unique'),
         ('Zack W.', 'Creative'),
         ('Kathy', 'Creative'),
         ('Eddie', 'Creative'),
@@ -156,7 +103,7 @@ if __name__ == '__main__':
         ('Eduardo C.', 'Spiritual'),
         ('Geraldo O.', 'Spiritual'),
         ('Alex O.', 'Unique'),
-        ('Eric C.', 'Spiritual'),
+        ('Eric C.', 'Unique'),
         ('Joe H.', 'Spiritual'),
         ('Gina L.', 'Unique'),
         ('Walter L.', 'Technical'),
@@ -166,7 +113,7 @@ if __name__ == '__main__':
         ('Tony C.', 'Technical'),
         ('Rafael T.', 'Technical'),
         ('Ryan F.', 'Technical'),
-        ('Sam W.', 'Technical'),
+        ('Sam W.', 'Unique'),
         ('Sam M.', 'Technical'),
         ('Michelle T.', 'Technical'),
         ('Regina A.', 'Technical'),
@@ -182,6 +129,7 @@ if __name__ == '__main__':
         ('Youssouf D.', 'Unique'),
         ('Krista K.', 'Unique'),
         ('Joy', 'Unique'),
+        ('Virgiliu P.', 'Technical'),
     ]
     
     # Each tuple is a link between two people (nodes)
@@ -209,7 +157,7 @@ if __name__ == '__main__':
         ('Shen Ge', 'Natalia'),
         ('Shen Ge', 'Jenny B.'),
         ('Shen Ge', 'Bucky R.'),
-        ('Shen Ge', 'Jenny'),
+        ('Shen Ge', 'Jenny A.'),
         ('Shen Ge', 'Adrienne'),
         ('Shen Ge', 'Yolanda M.'),
         ('Shen Ge', 'Alicia B.'),
@@ -260,11 +208,14 @@ if __name__ == '__main__':
         ('Alex O.', 'Eric C.'),
         ('Alex O.', 'Geraldo O.'),
         ('Alex O.', 'Eduardo C.'),
+        ('Alex O.', 'Natalia'),
+        ('Alex O.', 'Jenny A.'),
         ('Rose', 'Natalia'),
         ('Rose', 'Adrienne'),
         ('Rose', 'Jenny B.'),
         ('Natalia', 'Adrienne'),
         ('Natalia', 'Jenny B.'),
+        ('Natalia', 'Jenny A.'),
         ('Rose', 'Bucky R.'),
         ('Adrienne', 'Bucky R.'),
         ('Jenny B.', 'Bucky R.'),
@@ -274,10 +225,15 @@ if __name__ == '__main__':
         ('Shen Ge', 'Eddie'),
         ('Shen Ge', 'Dominique'),
         ('Eddie', 'Dominique'),
+        ('Shen Ge', 'Virgiliu P.'),
     ]
     
-    # Run the function (basic one without description)
-    # build_social_diagram_static(nodes, social_connections)
+    social_connections_weighted = [
+        ('Shen Ge', 'Jenny A.', 0.1),
+        ('Shen Ge', 'Jenny B.', 0.1),
+        ('Shen Ge', 'Alex O.', 0.2)
+        ]
+    
     
     desc = "Groups Notes:\nUnique means our conversations cannot be easily classified.\nSpiritual means we mainly talk about faith, God or emotional feelings. \
         \nCreative means we mainly talk about literature, art, music or upcoming creative events.\
