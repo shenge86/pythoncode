@@ -2,16 +2,11 @@ This part of the project documentation focuses on a **learning-oriented** approa
 
 Ideally, this code will allow you to load anything but right now it is hardcoded to only make social diagram for Shen.
 
-> **Note:** Expand this section by considering the
-> following points:
+Running this code right now is very simple since everything is hardcoded. 
 
-- Help newcomers with getting started
-- Teach readers about your library by making them write code
-- Inspire confidence through examples that work for everyone, repeatably
-- Give readers an immediate sense of achievement
-- Show concrete examples, no abstractions
-- Provide the minimum necessary explanation
-- Avoid any distractions
+In the social chart folder, run: `python socialchart.py`
+
+This will produce an image in the same folder. Note that the relative positions of the names will change every time but all data should be present.
 
 ## Acknowledgements
 Real Python as a helpful example:

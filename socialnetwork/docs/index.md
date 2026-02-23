@@ -3,10 +3,13 @@ This site contains the project documentation for the
 
 Currently it is manually made and only is for Shen. Future plan is to expand that to allow anyone to create a simple social network.
 
-To create this file for testing, simply do: 
+Example of what can be generated as follows:
+![social network diagram](shen_socialdiagram.png)
+
+To create this documentation for testing, simply do: 
 `mkdocs serve --livereload`
 
-To create this file for live website, simply do:
+To create this documentation for live website, simply do:
 `mkdocs gh-deploy`
 
 ## Table of Contents
