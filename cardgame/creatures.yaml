@@ -1,0 +1,18 @@
+creatures:
+  - name: Dragon
+    hp: 20
+    attack: 8
+    ability: Flying
+    description: "A fearsome winged beast that soars above the battlefield."
+
+  - name: Stone Golem
+    hp: 30
+    attack: 4
+    ability: Defender
+    description: "A hulking construct of rock, nearly impossible to destroy."
+
+  - name: Shadow Wolf
+    hp: 12
+    attack: 6
+    ability: Swiftness
+    description: "A spectral predator that strikes before the enemy can react."
