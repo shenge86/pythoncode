@@ -1,18 +1,29 @@
 creatures:
   - name: Dragon
-    hp: 20
+    hp: 360
     attack: 8
     ability: Flying
+    cost: 1000
     description: "A fearsome winged beast that soars above the battlefield."
+    traits:
+      - Enraged
 
   - name: Stone Golem
-    hp: 30
+    hp: 80
     attack: 4
     ability: Defender
+    cost: 200
     description: "A hulking construct of rock, nearly impossible to destroy."
+    traits:
+      - Blessed
+      - Battle-Hardened
 
   - name: Shadow Wolf
     hp: 12
     attack: 6
     ability: Swiftness
+    cost: 50
     description: "A spectral predator that strikes before the enemy can react."
+    traits:
+      - Cursed
+      - Withered

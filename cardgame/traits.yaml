@@ -1,0 +1,25 @@
+traits:
+  - name: Cursed
+    hp_modifier: -5
+    attack_modifier: -2
+    description: "Weakened by an ancient hex."
+
+  - name: Enraged
+    hp_modifier: -3
+    attack_modifier: 4
+    description: "Frenzied with bloodlust — hits harder but reckless."
+
+  - name: Blessed
+    hp_modifier: 8
+    attack_modifier: 2
+    description: "Touched by divine power, stronger in every way."
+
+  - name: Withered
+    hp_modifier: -8
+    attack_modifier: -3
+    description: "Drained of life force, barely holding together."
+
+  - name: Battle-Hardened
+    hp_modifier: 5
+    attack_modifier: 3
+    description: "Forged through countless fights."
