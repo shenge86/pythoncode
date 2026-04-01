@@ -3,7 +3,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 import yaml
+import random
 
+"""
+Card Game
+
+Defines the Creature, Trait and Player classes for a card game.
+Creatures are loaded from YAML and can be purchased by Player.
+
+Traits are randomly assigned when purchasing.
+
+"""
 
 # --- Ability enum -----------------------------------------------------------
 
@@ -143,7 +153,6 @@ class Creature:
             f"Traits: {trait_names}  ({status})"
         )
 
-
 # --- Creature loader --------------------------------------------------------
 
 def _parse_ability(raw: Optional[str]) -> Ability:
@@ -194,6 +203,16 @@ def load_creatures(
             else:
                 print(f"Warning: unknown trait '{name}' on {entry['name']}, skipping.")
 
+        # also add in one random trait
+        owned_names = {t.name for t in traits}
+        candidates  = [t for t in known_traits.values() if t.name not in owned_names]
+        
+        if not candidates:
+            pass # already have every trait
+        else: 
+            trait = random.choice(candidates)
+            traits.append(trait)
+
         creature = Creature(
             name        = entry["name"],
             max_hp      = entry["hp"],
@@ -207,53 +226,106 @@ def load_creatures(
 
     return creatures
 
-#%% money exchange
-def purchase(creature, assets):
-    print('Gold before purchase: ', assets['gold'])
-    if assets['gold'] >= creature.cost:
-        assets['gold'] -= creature.cost
-        assets['creatures'].append(creature)
-        print(f'You have bought 1 {creature.name}')
-        print('Gold remaining: ', assets['gold'])
-    else:
-        print('You do not have enough money to purhcase this!')
-    
-    return assets
+# --- Player class -----------------------------------------------------------
+ 
+class Player:
+    def __init__(self, name: str, hp: int = 20, gold: int = 1000):
+        self.name       = name
+        self.hp         = hp
+        self.max_hp     = hp
+        self.gold       = gold
+        self.creatures: list[Creature] = []
+ 
+    # --- Properties ---------------------------------------------------------
+ 
+    @property
+    def is_alive(self) -> bool:
+        return self.hp > 0
+ 
+    @property
+    def alive_creatures(self) -> list[Creature]:
+        return [c for c in self.creatures if c.is_alive]
+ 
+    # --- Health -------------------------------------------------------------
+ 
+    def take_damage(self, amount: int) -> None:
+        self.hp = max(0, self.hp - amount)
+        print(f"  {self.name} takes {amount} damage! HP: {self.hp}/{self.max_hp}")
+ 
+    def heal(self, amount: int) -> None:
+        self.hp = min(self.max_hp, self.hp + amount)
+        print(f"  {self.name} heals {amount}. HP: {self.hp}/{self.max_hp}")
+ 
+    # --- Shop ---------------------------------------------------------------
+ 
+    def can_afford(self, creature: Creature) -> bool:
+        return self.gold >= creature.cost
+ 
+    def purchase(self, creature: Creature) -> bool:
+        """
+        Attempt to purchase a creature. Returns True if successful,
+        False if the player can't afford it.
+        """
+        if not self.can_afford(creature):
+            print(
+                f"  {self.name} can't afford {creature.name}! "
+                f"(costs {creature.cost}, have {self.gold} gold)"
+            )
+            return False
+ 
+        self.gold -= creature.cost
+        self.creatures.append(creature)
+        print(
+            f"  {self.name} purchased {creature.name} for {creature.cost} gold. "
+            f"({self.gold} gold remaining)"
+        )
+        return True
+ 
+    def sell(self, creature: Creature) -> bool:
+        """
+        Sell a creature back for half its cost (rounded down).
+        Returns True if successful, False if creature isn't owned.
+        """
+        if creature not in self.creatures:
+            print(f"  {self.name} doesn't own {creature.name}!")
+            return False
+ 
+        refund = creature.cost // 2
+        self.creatures.remove(creature)
+        self.gold += refund
+        print(
+            f"  {self.name} sold {creature.name} for {refund} gold. "
+            f"({self.gold} gold remaining)"
+        )
+        return True
+ 
+    # --- Turn management ----------------------------------------------------
+ 
+    def ready_all(self) -> None:
+        """Refresh all creatures at the start of a new turn."""
+        for creature in self.alive_creatures:
+            creature.ready()
+ 
+    # --- Display ------------------------------------------------------------
+ 
+    def __str__(self) -> str:
+        lines = [
+            f"Player: {self.name}  HP: {self.hp}/{self.max_hp}  Gold: {self.gold}",
+            f"  Creatures ({len(self.alive_creatures)} alive):",
+        ]
+        if self.creatures:
+            for c in self.creatures:
+                status = "💀" if not c.is_alive else ""
+                lines.append(f"    {status} {c}")
+        else:
+            lines.append("    (none)")
+        return "\n".join(lines)
 
-#%% battle exchange
-def battle_exchange(attacker, defender):
-    if attacker.can_attack:
-        defender.take_damage(attacker.attack)
-        attacker.exhaust()
-        print(f"  {attacker.name} deals {attacker.attack} damage.")
-        print(f"  {defender}")
-        if not defender.is_alive:
-            print(f"  {defender.name} has been destroyed!")
-    else:
-        print(f"  {attacker.name} cannot attack!")
-        
-    print('**********************************************************')
-    
-    # defender's retaliation
-    if defender.can_defend:
-        attacker.take_damage(defender.attack)
-        defender.exhaust()
-        print(f"  {defender.name} retaliates and deals {defender.attack} damage.")
-        print(f"  {attacker}")
-        if not attacker.is_alive:
-            print(f"  {attacker.name} has been destroyed!")
-
-def end_turn(creatures):
-    print('===========EVERYONE RESTING=========')
-    for creature in creatures:
-        creature.ready()
-        # all heal a bit
-        creature.heal(1)
-        print(f'{creature.name} has healed by 1')
-        print(creature)
 #%%
 if __name__ == "__main__":
-    creatures = load_creatures("creatures.yaml", "traits.yaml")
+    creatures_path = 'creatures.yaml'
+    traits_path    = 'traits.yaml'
+    creatures = load_creatures(creatures_path, traits_path)
 
     print("=== Creatures loaded with traits ===\n")
     for c in creatures:
@@ -264,21 +336,5 @@ if __name__ == "__main__":
         print()
     
     #%% simulated battle
-    # purchase one
-    assets = {'gold': 1000,
-              'creatures': [],
-              }
-              
-    assets = purchase(creatures[0], assets)
-    
-    
-    # simulate initial battle
-    # attacker, defender = creatures[0], creatures[1]
-    attacker = assets['creatures'][0]
-    defender = creatures[1]
-    print(f"--- Combat: {attacker.name} attacks {defender.name} ---")
-
-    battle_exchange(attacker, defender)
-    end_turn(creatures)
-    
-    battle_exchange(attacker, defender)
+    alice = Player(name="Alice", hp=20, gold=1000)
+    alice.purchase(creatures[0]) 

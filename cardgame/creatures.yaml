@@ -1,7 +1,7 @@
 creatures:
   - name: Dragon
     hp: 360
-    attack: 8
+    attack: 20
     ability: Flying
     cost: 1000
     description: "A fearsome winged beast that soars above the battlefield."
@@ -25,5 +25,4 @@ creatures:
     cost: 50
     description: "A spectral predator that strikes before the enemy can react."
     traits:
-      - Cursed
-      - Withered
+      - Blessed
