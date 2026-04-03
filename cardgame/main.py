@@ -8,6 +8,16 @@ Created on Tue Mar 31 23:23:12 2026
 
 from creature import load_creatures, Player
 
+#%% turn
+class Turn():
+    def __init__(self, turnnumber: int = 1, stage: str = 'A', gold: int = 1000):
+        self.turnnumber = turnnumber
+        self.stage      = stage
+        self.gold       = gold
+    
+    # --- Properties ---------------------------------------------------------
+
+
 #%% battle exchange
 def battle_exchange(attacker, defender):
     if attacker.can_attack:

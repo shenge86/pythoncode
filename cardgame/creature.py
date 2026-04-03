@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -80,6 +81,27 @@ def load_traits(path: str | Path) -> dict[str, Trait]:
 
     return traits
 
+
+def append_random_trait(creature: Creature, available_traits: dict[str, Trait]) -> bool:
+    """
+    Append a random trait to a creature if it doesn't already have it.
+    Returns True if a trait was added, False if all traits are already owned.
+    """
+    owned_names = {t.name for t in creature.traits}
+    candidates  = [t for t in available_traits.values() if t.name not in owned_names]
+
+    if not candidates:
+        print(f"  {creature.name} already has all available traits!")
+        return False
+
+    trait = random.choice(candidates)
+    creature.traits.append(trait)
+    creature.max_hp     += trait.hp_modifier
+    creature.current_hp += trait.hp_modifier
+    creature.attack     += trait.attack_modifier
+
+    print(f"  {creature.name} gained the trait: {trait}")
+    return True
 
 # --- Creature dataclass -----------------------------------------------------
 
