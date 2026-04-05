@@ -147,10 +147,10 @@ def render_player(player: Player) -> None:
 
 # --- Shop -------------------------------------------------------------------
 
-def render_shop(shop: list[Creature]) -> None:
+def render_shop(shop: list[Creature], player: Player) -> None:
     """Render the available shop creatures as a table."""
     table = Table(
-        title="[bold yellow1]⚔  Shop[/]",
+        title=f"[bold yellow1]⚔  Shop[/] for {player.name}",
         box=box.SIMPLE_HEAVY,
         border_style="yellow4",
         header_style="bold yellow1",
@@ -163,6 +163,7 @@ def render_shop(shop: list[Creature]) -> None:
     table.add_column("ATK",     style="red1",    width=5)
     table.add_column("Traits",  style="magenta")
     table.add_column("Cost",    style="yellow1", width=6)
+    table.add_column("Era",     style="white")
 
     for i, c in enumerate(shop):
         traits = ", ".join(t.name for t in c.traits) or "—"
@@ -174,6 +175,7 @@ def render_shop(shop: list[Creature]) -> None:
             str(c.attack),
             traits,
             f"{c.cost}g",
+            c.era.value,
         )
 
     console.print(table)

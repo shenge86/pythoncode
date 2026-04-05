@@ -12,6 +12,8 @@ Each turn cycles through four phases:
 
 from __future__ import annotations
 import random
+import copy # required to not reference the same creature over and over
+
 from creature import Creature, Player, load_creatures, load_traits
 import display
 
@@ -23,12 +25,14 @@ class Turn:
         self,
         player_one:    Player,
         player_two:    Player,
-        shop:          list[Creature],
+        shop_one:      list[Creature],
+        shop_two:      list[Creature],
         gold_per_turn: int = 3,
     ):
         self.player_one    = player_one
         self.player_two    = player_two
-        self.shop          = shop
+        self.shop_one      = shop_one
+        self.shop_two      = shop_two
         self.gold_per_turn = gold_per_turn
         self.turn_number   = 1
 
@@ -55,7 +59,10 @@ class Turn:
             self.active_player.gold,
         )
 
-        affordable = [c for c in self.shop if self.active_player.can_afford(c)]
+        if self.active_player == self.player_one:
+            affordable = [c for c in self.shop_one if self.active_player.can_afford(c)]
+        else:
+            affordable = [c for c in self.shop_two if self.active_player.can_afford(c)]
 
         if not affordable:
             display.log_cant_afford(
@@ -65,7 +72,8 @@ class Turn:
 
         chosen = max(affordable, key=lambda c: c.cost)
         self.active_player.gold -= chosen.cost
-        self.active_player.creatures.append(chosen)
+        self.active_player.creatures.append(copy.deepcopy(chosen))
+        
         display.log_purchase(
             self.active_player.name,
             chosen.name,
@@ -145,7 +153,8 @@ class Turn:
 
     def run(self, max_turns: int = 50) -> None:
         display.render_game_start(self.player_one.name, self.player_two.name)
-        display.render_shop(self.shop)
+        display.render_shop(self.shop_one, self.player_one)
+        display.render_shop(self.shop_two, self.player_two)
         display.render_player(self.player_one)
         display.render_player(self.player_two)
 
@@ -167,14 +176,16 @@ class Turn:
 # --- Entry point ------------------------------------------------------------
 
 if __name__ == "__main__":
-    shop  = load_creatures("creatures.yaml", "traits.yaml")
+    shop_one  = load_creatures("creatures.yaml", "traits.yaml", "Medieval")
+    shop_two  = load_creatures("creatures.yaml", "traits.yaml", "Mythical")
     alice = Player(name="Alice", hp=20, gold=1000)
-    bob   = Player(name="Bob",   hp=20, gold=0)
+    bob   = Player(name="Bob",   hp=20, gold=100)
 
     game = Turn(
         player_one    = alice,
         player_two    = bob,
-        shop          = shop,
+        shop_one      = shop_one,
+        shop_two      = shop_two,
         gold_per_turn = 3,
     )
     game.run()

@@ -29,7 +29,16 @@ ABILITY_BONUS_HP: dict[Ability, int] = {
     Ability.DEFENDER: 5,
 }
 
+# --- Era enum -----------------------------------------------------------
 
+class Era(Enum):
+    MYTHICAL = "Mythical"
+    MEDIEVAL = "Medieval"
+    DEMONIC  = "Demonic"
+    ANGELIC  = "Angelic"
+    MODERN   = "Modern"
+    FUTURE   = "Future"
+    NONE     = "None"
 # --- Trait dataclass --------------------------------------------------------
 
 @dataclass
@@ -114,6 +123,7 @@ class Creature:
     ability:     Ability = Ability.NONE
     description: str     = ""
     traits:      list[Trait] = field(default_factory=list)
+    era:         Era = Era.NONE
 
     # Runtime state
     current_hp:   int  = field(init=False)
@@ -186,10 +196,20 @@ def _parse_ability(raw: Optional[str]) -> Ability:
         print(f"Warning: unknown ability '{raw}', defaulting to NONE.")
         return Ability.NONE
 
+def _parse_era(raw: Optional[str]) -> Era:
+    if not raw:
+        return Era.NONE
+    try:
+        return Era(raw)
+    except ValueError:
+        print(f"Warning: unknown era '{raw}', defaulting to NONE.")
+        return Ability.NONE
+
 
 def load_creatures(
     creatures_path: str | Path,
     traits_path:    str | Path,
+    era_allowed:    str | Era = Era.NONE,
 ) -> list[Creature]:
     """
     Load creatures from a YAML file, applying any traits listed on each
@@ -201,10 +221,11 @@ def load_creatures(
             hp: 20
             attack: 8
             ability: Flying
+            cost: 1000
             description: "..."
             traits:
               - Enraged
-              - Blessed
+            era: mythical
     """
     # Load the trait definitions first so we can look them up by name
     known_traits = load_traits(traits_path)
@@ -243,8 +264,14 @@ def load_creatures(
             cost        = entry["cost"],
             description = entry.get("description", ""),
             traits      = traits,
+            era         = _parse_era(entry.get("era"))
         )
-        creatures.append(creature)
+        
+        # Only append if matches the Era of creature
+        if creature.era == _parse_era(era_allowed):
+            creatures.append(creature)
+        else:
+            print(f'Ignoring {creature.name} since not a {era_allowed}')
 
     return creatures
 
@@ -347,7 +374,8 @@ class Player:
 if __name__ == "__main__":
     creatures_path = 'creatures.yaml'
     traits_path    = 'traits.yaml'
-    creatures = load_creatures(creatures_path, traits_path)
+    era_allowed    = 'Mythical'
+    creatures = load_creatures(creatures_path, traits_path, era_allowed)
 
     print("=== Creatures loaded with traits ===\n")
     for c in creatures:
@@ -355,6 +383,7 @@ if __name__ == "__main__":
         if c.traits:
             for t in c.traits:
                 print(f"  Trait — {t}: {t.description}")
+        print("Era: ", c.era.value)
         print()
     
     #%% simulated battle
