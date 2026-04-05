@@ -20,7 +20,7 @@ creatures:
     era: Mythical
 
   - name: Stone Golem
-    hp: 80
+    hp: 50
     attack: 15
     ability: Defender
     cost: 200

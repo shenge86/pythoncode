@@ -14,7 +14,7 @@ from __future__ import annotations
 import random
 import copy # required to not reference the same creature over and over
 
-from creature import Creature, Player, load_creatures, load_traits
+from creature import Creature, Player, AIPlayer, load_creatures, load_traits
 import display
 
 
@@ -69,17 +69,20 @@ class Turn:
                 self.active_player.name, "anything", 0, self.active_player.gold
             )
             return
-
-        chosen = max(affordable, key=lambda c: c.cost)
-        self.active_player.gold -= chosen.cost
-        self.active_player.creatures.append(copy.deepcopy(chosen))
         
-        display.log_purchase(
-            self.active_player.name,
-            chosen.name,
-            chosen.cost,
-            self.active_player.gold,
-        )
+        chosen_arr = self.active_player.choose_purchase(affordable)
+
+        # do for each creature purchased
+        for chosen in chosen_arr:
+            self.active_player.gold -= chosen.cost
+            self.active_player.creatures.append(copy.deepcopy(chosen))
+            
+            display.log_purchase(
+                self.active_player.name,
+                chosen.name,
+                chosen.cost,
+                self.active_player.gold,
+            )
 
     def attack_phase(self) -> None:
         display.render_phase_header("Attack Phase")
@@ -95,10 +98,17 @@ class Turn:
 
             if defenders:
                 target = random.choice(defenders)
+                
+                # Attacker hits defender
                 display.log_attack(attacker.name, target.name, attacker.attack)
                 target.take_damage(attacker.attack)
                 if not target.is_alive:
                     display.log_creature_destroyed(target.name)
+                elif target.is_alive and attacker.ability is not attacker.ability.SWIFTNESS: # Defender counter-attacks if still alive
+                    display.log_attack(target.name, attacker.name, target.attack)
+                    attacker.take_damage(target.attack)
+                    if not attacker.is_alive:
+                        display.log_creature_destroyed(attacker.name)
             else:
                 display.log_direct_attack(
                     attacker.name, self.opponent_player.name, attacker.attack
@@ -178,8 +188,8 @@ class Turn:
 if __name__ == "__main__":
     shop_one  = load_creatures("creatures.yaml", "traits.yaml", "Medieval")
     shop_two  = load_creatures("creatures.yaml", "traits.yaml", "Mythical")
-    alice = Player(name="Alice", hp=20, gold=1000)
-    bob   = Player(name="Bob",   hp=20, gold=100)
+    alice = AIPlayer(name="Alice", hp=20, gold=1000)
+    bob   = Player(name="Bob",   hp=20, gold=200)
 
     game = Turn(
         player_one    = alice,

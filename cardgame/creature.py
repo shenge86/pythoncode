@@ -310,6 +310,11 @@ class Player:
     def can_afford(self, creature: Creature) -> bool:
         return self.gold >= creature.cost
  
+    def choose_purchase(self, affordable: list[Creature]) -> bool:
+        """Most basic purchasing logic for an AI"""
+        chosen = max(affordable, key=lambda c: c.cost)
+        return [chosen]
+ 
     def purchase(self, creature: Creature) -> bool:
         """
         Attempt to purchase a creature. Returns True if successful,
@@ -370,6 +375,24 @@ class Player:
             lines.append("    (none)")
         return "\n".join(lines)
 
+#%%
+class HumanPlayer(Player):
+    def choose_purchase(self, shop):
+        pass
+        # show options
+
+class AIPlayer(Player):
+    def choose_purchase(self, affordable: list[Creature]) -> bool:
+        i = 1
+        chosen_cheapest = min(affordable, key=lambda c: c.cost)
+        print('Cheapest creature: ', chosen_cheapest)
+        chosen_arr = []
+        while i < 5 and (self.gold > chosen_cheapest.cost):
+            chosen = max(affordable, key=lambda c: c.cost)
+            chosen_arr.append(chosen)
+            i+= 1
+        return chosen_arr
+        
 #%%
 if __name__ == "__main__":
     creatures_path = 'creatures.yaml'
