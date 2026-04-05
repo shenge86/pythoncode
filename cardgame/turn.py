@@ -14,7 +14,8 @@ from __future__ import annotations
 import random
 import copy # required to not reference the same creature over and over
 
-from creature import Creature, Player, AIPlayer, load_creatures, load_traits
+from creature import Creature, Player, AIPlayer, load_creatures, load_traits, get_creatures_by_ability
+from creature import Ability
 import display
 
 
@@ -52,10 +53,15 @@ class Turn:
     def purchase_phase(self) -> None:
         display.render_phase_header("Purchase Phase")
 
-        self.active_player.gold += self.gold_per_turn
+        # Update income and add gold
+        self.active_player.update_income()
+        self.active_player.gold += self.active_player.income
+        
+        # self.active_player.gold += self.gold_per_turn
         display.log_gold_income(
             self.active_player.name,
-            self.gold_per_turn,
+            self.active_player.income,
+            # self.gold_per_turn,
             self.active_player.gold,
         )
 
@@ -74,7 +80,7 @@ class Turn:
 
         # do for each creature purchased
         for chosen in chosen_arr:
-            self.active_player.gold -= chosen.cost
+            self.active_player.gold -= chosen.cost #! This can also be in the Player class but then cannot connect to display
             self.active_player.creatures.append(copy.deepcopy(chosen))
             
             display.log_purchase(
@@ -83,6 +89,8 @@ class Turn:
                 chosen.cost,
                 self.active_player.gold,
             )
+            
+            display.log_flavor('purchase')
 
     def attack_phase(self) -> None:
         display.render_phase_header("Attack Phase")
@@ -97,22 +105,36 @@ class Turn:
             defenders = self.opponent_player.alive_creatures
 
             if defenders:
-                target = random.choice(defenders)
+                # Defenders always defend first before anyone else
+                defenders_walls = get_creatures_by_ability(defenders, Ability.DEFENDER)
+                
+                if len(defenders_walls) == 0:
+                    # if no creatures with DEFENDER ability, choose a random creature
+                    target = random.choice(defenders)
+                else:
+                    target = defenders_walls[0]
+                    display.log_defender(target.name)
                 
                 # Attacker hits defender
                 display.log_attack(attacker.name, target.name, attacker.attack)
+                display.log_flavor('attack')
+                
                 target.take_damage(attacker.attack)
                 if not target.is_alive:
                     display.log_creature_destroyed(target.name)
+                    display.log_flavor('destroyed')
                 elif target.is_alive and attacker.ability is not attacker.ability.SWIFTNESS: # Defender counter-attacks if still alive
                     display.log_attack(target.name, attacker.name, target.attack)
+                    display.log_flavor('attack')
                     attacker.take_damage(target.attack)
                     if not attacker.is_alive:
                         display.log_creature_destroyed(attacker.name)
+                        display.log_flavor('destroyed')
             else:
                 display.log_direct_attack(
                     attacker.name, self.opponent_player.name, attacker.attack
                 )
+                display.log_flavor('direct_attack')
                 self.opponent_player.take_damage(attacker.attack)
 
             attacker.exhaust()
@@ -186,10 +208,11 @@ class Turn:
 # --- Entry point ------------------------------------------------------------
 
 if __name__ == "__main__":
-    shop_one  = load_creatures("creatures.yaml", "traits.yaml", "Medieval")
-    shop_two  = load_creatures("creatures.yaml", "traits.yaml", "Mythical")
-    alice = AIPlayer(name="Alice", hp=20, gold=1000)
-    bob   = Player(name="Bob",   hp=20, gold=200)
+    known_traits = "traits.yaml"
+    shop_one  = load_creatures("creatures.yaml", known_traits, "Medieval")
+    shop_two  = load_creatures("creatures.yaml", known_traits, "Mythical")
+    alice = AIPlayer(name="Princess Alice", hp=20, gold=300)
+    bob   = Player(name="Ancient Ent",   hp=200, gold=170)
 
     game = Turn(
         player_one    = alice,

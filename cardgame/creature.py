@@ -120,6 +120,7 @@ class Creature:
     max_hp:      int
     attack:      int
     cost:        int
+    income:      int = 0 # by default, a creature produces no gold for you
     ability:     Ability = Ability.NONE
     description: str     = ""
     traits:      list[Trait] = field(default_factory=list)
@@ -205,6 +206,8 @@ def _parse_era(raw: Optional[str]) -> Era:
         print(f"Warning: unknown era '{raw}', defaulting to NONE.")
         return Ability.NONE
 
+def get_creatures_by_ability(creatures: list[Creature], ability: Ability) -> list[Creature]:
+    return [c for c in creatures if c.ability is ability]
 
 def load_creatures(
     creatures_path: str | Path,
@@ -247,14 +250,14 @@ def load_creatures(
                 print(f"Warning: unknown trait '{name}' on {entry['name']}, skipping.")
 
         # also add in one random trait
-        owned_names = {t.name for t in traits}
-        candidates  = [t for t in known_traits.values() if t.name not in owned_names]
+        # owned_names = {t.name for t in traits}
+        # candidates  = [t for t in known_traits.values() if t.name not in owned_names]
         
-        if not candidates:
-            pass # already have every trait
-        else: 
-            trait = random.choice(candidates)
-            traits.append(trait)
+        # if not candidates:
+        #     pass # already have every trait
+        # else: 
+        #     trait = random.choice(candidates)
+        #     traits.append(trait)
 
         creature = Creature(
             name        = entry["name"],
@@ -262,6 +265,7 @@ def load_creatures(
             attack      = entry["attack"],
             ability     = _parse_ability(entry.get("ability")),
             cost        = entry["cost"],
+            income      = entry["income"],
             description = entry.get("description", ""),
             traits      = traits,
             era         = _parse_era(entry.get("era"))
@@ -271,18 +275,20 @@ def load_creatures(
         if creature.era == _parse_era(era_allowed):
             creatures.append(creature)
         else:
-            print(f'Ignoring {creature.name} since not a {era_allowed}')
+            pass
+            # print(f'Ignoring {creature.name} since not a {era_allowed}')
 
     return creatures
 
 # --- Player class -----------------------------------------------------------
  
 class Player:
-    def __init__(self, name: str, hp: int = 20, gold: int = 1000):
+    def __init__(self, name: str, hp: int = 20, gold: int = 1000, income: int = 0):
         self.name       = name
         self.hp         = hp
         self.max_hp     = hp
         self.gold       = gold
+        self.income     = income
         self.creatures: list[Creature] = []
  
     # --- Properties ---------------------------------------------------------
@@ -313,6 +319,7 @@ class Player:
     def choose_purchase(self, affordable: list[Creature]) -> bool:
         """Most basic purchasing logic for an AI"""
         chosen = max(affordable, key=lambda c: c.cost)
+        # self.gold -= chosen.cost # do not uncomment if in turns.py
         return [chosen]
  
     def purchase(self, creature: Creature) -> bool:
@@ -353,6 +360,12 @@ class Player:
         )
         return True
  
+    def update_income(self):
+        """Updates the income for the player"""
+        self.income = 0 # reset to 0
+        for creature in self.creatures:
+            self.income += creature.income
+
     # --- Turn management ----------------------------------------------------
  
     def ready_all(self) -> None:
@@ -383,21 +396,32 @@ class HumanPlayer(Player):
 
 class AIPlayer(Player):
     def choose_purchase(self, affordable: list[Creature]) -> bool:
-        i = 1
-        chosen_cheapest = min(affordable, key=lambda c: c.cost)
+        gold = self.gold # temporary variable for calculating when to stop
+        chosen_cheapest  = min(affordable, key=lambda c: c.cost)
         print('Cheapest creature: ', chosen_cheapest)
+        
+        chosen_expensive = max(affordable, key=lambda c: c.cost)
+        print('Expensivest creature: ', chosen_expensive)
         chosen_arr = []
-        while i < 5 and (self.gold > chosen_cheapest.cost):
+        while gold >= chosen_expensive.cost:
             chosen = max(affordable, key=lambda c: c.cost)
             chosen_arr.append(chosen)
-            i+= 1
+            gold -= chosen.cost
+            # self.gold -= chosen.cost # do not put here if in turns.py
+            
+        # now buy the cheapest ones
+        while gold >= chosen_cheapest.cost:
+            chosen = min(affordable, key=lambda c: c.cost)
+            chosen_arr.append(chosen)
+            gold -= chosen.cost
+        
         return chosen_arr
         
 #%%
 if __name__ == "__main__":
     creatures_path = 'creatures.yaml'
     traits_path    = 'traits.yaml'
-    era_allowed    = 'Mythical'
+    era_allowed    = 'Medieval'
     creatures = load_creatures(creatures_path, traits_path, era_allowed)
 
     print("=== Creatures loaded with traits ===\n")
@@ -411,4 +435,14 @@ if __name__ == "__main__":
     
     #%% simulated battle
     alice = Player(name="Alice", hp=20, gold=1000)
-    alice.purchase(creatures[0]) 
+    alice.purchase(creatures[0])
+    alice.update_income()
+    
+    alice.purchase(creatures[1])
+    alice.update_income()
+    
+    print('Income every turn: ', alice.income)
+    
+    #%% get defenders
+    defenders = [c for c in creatures if c.ability is Ability.DEFENDER]
+    print(defenders)

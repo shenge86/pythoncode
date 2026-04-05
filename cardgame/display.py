@@ -15,6 +15,8 @@ from rich.progress import BarColumn, Progress, TextColumn
 from rich import box
 from rich.rule import Rule
 
+import random
+
 from creature import Creature, Player
 
 console = Console()
@@ -35,6 +37,37 @@ TRAIT_COLOR: dict[str, str] = {
     "Cursed":         "magenta",
     "Withered":       "grey42",
     "Battle-Hardened": "orange1",
+}
+
+FLAVOR_COMMENTS = {
+    "attack": [
+        "The battlefield trembles.",
+        "No mercy shown.",
+        "Steel meets flesh.",
+        "A decisive strike!",
+        "The crowd roars.",
+    ],
+    "destroyed": [
+        "Reduced to rubble.",
+        "Another falls.",
+        "Gone, but not forgotten.",
+        "The dust settles.",
+        "Nothing remains.",
+    ],
+    "direct_attack": [
+        "The gates are broken!",
+        "No one left to defend!",
+        "Chaos erupts!",
+        "The enemy is exposed!",
+        "A devastating blow!",
+    ],
+    "purchase": [
+        "A new ally joins the cause.",
+        "The ranks grow stronger.",
+        "Coin well spent.",
+        "Fortune favors the bold.",
+        "A fine addition to the field.",
+    ],
 }
 
 
@@ -102,11 +135,17 @@ def creature_card(creature: Creature, width: int = 36) -> Panel:
     body.append("\n")
     body.append("  COST ", style="grey70")
     body.append(str(creature.cost), style="bold yellow1")
+    body.append("  INCOME ", style="grey70")
+    body.append("+" + str(creature.income), style="bold green3")
     body.append(" gold\n")
     body.append("  ")
     body.append(_trait_badges(creature.traits))
     body.append("\n  ")
-    body.append(status)
+    
+    if creature.is_exhausted:
+        body.append("exhausted", style="grey50 italic")
+    else:
+        body.append("ready", style="green3")
 
     border_color = "grey30" if not alive else (
         "red3" if creature.is_exhausted else "cyan"
@@ -163,6 +202,7 @@ def render_shop(shop: list[Creature], player: Player) -> None:
     table.add_column("ATK",     style="red1",    width=5)
     table.add_column("Traits",  style="magenta")
     table.add_column("Cost",    style="yellow1", width=6)
+    table.add_column("+Gold",   style="green3")
     table.add_column("Era",     style="white")
 
     for i, c in enumerate(shop):
@@ -175,6 +215,7 @@ def render_shop(shop: list[Creature], player: Player) -> None:
             str(c.attack),
             traits,
             f"{c.cost}g",
+            str(c.income),
             c.era.value,
         )
 
@@ -195,6 +236,12 @@ def log_cant_afford(player_name: str, creature_name: str, cost: int, gold: int) 
         f"  [red1]✗[/] [bold]{player_name}[/] can't afford "
         f"[bold cyan]{creature_name}[/] "
         f"([yellow1]{cost}g[/] needed, have [yellow1]{gold}g[/])"
+    )
+
+def log_defender(creature_name: str) -> None:
+    console.print(
+        f"  [yellow1]🌊[/] A formidable presence here "
+        f"[bold cyan]{creature_name}[/] is blocking the way!"
     )
 
 def log_attack(attacker: str, target: str, damage: int) -> None:
@@ -227,6 +274,13 @@ def log_gold_income(player_name: str, amount: int, total: int) -> None:
 def log_readied(player_name: str) -> None:
     console.print(f"  [green3]↺[/]  {player_name}'s creatures are readied.")
 
+def log_flavor(event: str) -> None:
+    """Print a randomly chosen flavor comment for a given event type."""
+    options = FLAVOR_COMMENTS.get(event, [])
+    if not options:
+        return
+    text = random.choice(options)
+    console.print(f"    [italic grey50]{text}[/]")
 
 # --- Turn / game headers ----------------------------------------------------
 

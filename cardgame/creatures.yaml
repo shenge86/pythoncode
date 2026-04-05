@@ -3,10 +3,33 @@ creatures:
     hp: 6
     attack: 10
     ability: None
-    cost: 100
+    cost: 90
+    income: 0
     description: "A castle archer with a regular bow."
     traits:
       - Blessed
+    era: Medieval
+
+  - name: Peasant
+    hp: 1
+    attack: 1
+    ability: None
+    cost: 10
+    income: 4
+    description: "A peasant farmer farming the lands."
+    traits:
+      - None
+    era: Medieval
+
+  - name: Fortress Wall
+    hp: 100
+    attack: 5
+    ability: Defender
+    cost: 180
+    income: 0
+    description: "The standard medieval fortress wall"
+    traits:
+      - None
     era: Medieval
     
   - name: Dragon
@@ -14,6 +37,7 @@ creatures:
     attack: 50
     ability: Flying
     cost: 1000
+    income: 0
     description: "A fearsome winged beast that soars above the battlefield."
     traits:
       - Enraged
@@ -24,6 +48,7 @@ creatures:
     attack: 15
     ability: Defender
     cost: 200
+    income: 0
     description: "A hulking construct of rock, nearly impossible to destroy."
     traits:
       - Blessed
@@ -35,6 +60,7 @@ creatures:
     attack: 6
     ability: Swiftness
     cost: 50
+    income: 0
     description: "A spectral predator that strikes before the enemy can react."
     traits:
       - Blessed
