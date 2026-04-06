@@ -19,10 +19,13 @@ Traits are randomly assigned when purchasing.
 # --- Ability enum -----------------------------------------------------------
 
 class Ability(Enum):
-    FLYING    = "Flying"
-    DEFENDER  = "Defender"
-    SWIFTNESS = "Swiftness"
-    NONE      = "None"
+    FLYING      = "Flying"
+    DEFENDER    = "Defender"
+    SWIFTNESS   = "Swiftness"
+    INSPIRATION = "Inspiration"
+    CREATION    = "Creation"
+    INSIGHT     = "Insight"
+    NONE        = "None"
 
 #  this dictionary has Ability enum values as keys and integers as values
 ABILITY_BONUS_HP: dict[Ability, int] = {
@@ -208,6 +211,9 @@ def _parse_era(raw: Optional[str]) -> Era:
 
 def get_creatures_by_ability(creatures: list[Creature], ability: Ability) -> list[Creature]:
     return [c for c in creatures if c.ability is ability]
+
+def has_ability(creatures: list[Creature], ability: Ability) -> bool:
+    return any(c.ability is ability for c in creatures)
 
 def load_creatures(
     creatures_path: str | Path,

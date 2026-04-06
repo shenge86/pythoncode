@@ -240,9 +240,21 @@ def log_cant_afford(player_name: str, creature_name: str, cost: int, gold: int) 
 
 def log_defender(creature_name: str) -> None:
     console.print(
-        f"  [yellow1]🌊[/] A formidable presence here "
+        f"  [yellow1]🌊[/] A formidable presence here!"
         f"[bold cyan]{creature_name}[/] is blocking the way!"
     )
+
+def log_cast(creature_name: str, spell_name: str) -> None:
+    console.print(
+        f" [yellow1]🪄[/] Magic swirls in the air..."
+        f"[bold cyan]{creature_name}[/] casts [purple]{spell_name}[/]"
+        )
+    
+def log_effect(creature_name: str, effect: str) -> None:
+    console.print(
+        f" [yellow1]🪄[/] "
+        f"[bold cyan]{creature_name}[/] [purple]{effect}[/]"
+        )
 
 def log_attack(attacker: str, target: str, damage: int) -> None:
     console.print(

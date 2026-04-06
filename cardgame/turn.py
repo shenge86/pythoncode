@@ -14,10 +14,48 @@ from __future__ import annotations
 import random
 import copy # required to not reference the same creature over and over
 
-from creature import Creature, Player, AIPlayer, load_creatures, load_traits, get_creatures_by_ability
-from creature import Ability
+from creature import Creature, Player, AIPlayer, load_creatures, load_traits
+from creature import Ability, get_creatures_by_ability, has_ability
 import display
 
+# --- Helper classes for shops -----------------------------------------------
+
+def buff_random_shop_creature(shop: list[Creature], hp_bonus: int = 5, attack_bonus: int = 2) -> Creature | None:
+    """
+    Randomly select a creature in the shop and permanently buff its stats.
+    Returns the buffed creature, or None if the shop is empty.
+    """
+    if not shop:
+        return None
+
+    chosen = random.choice(shop)
+    chosen.max_hp      += hp_bonus
+    chosen.current_hp  += hp_bonus
+    chosen.attack      += attack_bonus
+
+    console.print(
+        f"  [bold yellow1]⚡ {chosen.name}[/] has been empowered! "
+        f"[green3]+{hp_bonus} HP[/]  [red1]+{attack_bonus} ATK[/]"
+    )
+    return chosen
+
+def merge_random_creature(shop_one: list[Creature], shop_two: list[Creature]) -> Creature | None:
+    """
+    Pick a random creature from shop_two and add a copy of it to shop_one.
+    Returns the added creature, or None if shop_two is empty.
+    """
+    if not shop_two:
+        console.print("  [grey50 italic]Second shop is empty, nothing to merge.[/]")
+        return None
+
+    chosen = copy.deepcopy(random.choice(shop_two))
+    shop_one.append(chosen)
+
+    console.print(
+        f"  [bold cyan]✦ {chosen.name}[/] has arrived in the shop! "
+        f"[grey50]HP: {chosen.max_hp}  ATK: {chosen.attack}  Cost: {chosen.cost}g[/]"
+    )
+    return chosen
 
 # --- Turn class -------------------------------------------------------------
 
@@ -39,6 +77,8 @@ class Turn:
 
         self.active_player   = player_one
         self.opponent_player = player_two
+        self.active_shop     = shop_one
+        self.opponent_shop   = shop_two
 
     # --- Helpers ------------------------------------------------------------
 
@@ -46,6 +86,12 @@ class Turn:
         self.active_player, self.opponent_player = (
             self.opponent_player,
             self.active_player,
+        )
+
+    def _switch_active_shop(self) -> None:
+        self.active_shop, self.opponent_shop = (
+            self.opponent_shop,
+            self.active_shop,
         )
 
     # --- Phases -------------------------------------------------------------
@@ -65,10 +111,12 @@ class Turn:
             self.active_player.gold,
         )
 
-        if self.active_player == self.player_one:
-            affordable = [c for c in self.shop_one if self.active_player.can_afford(c)]
-        else:
-            affordable = [c for c in self.shop_two if self.active_player.can_afford(c)]
+        # if self.active_player == self.player_one:
+        #     affordable = [c for c in self.shop_one if self.active_player.can_afford(c)]
+        # else:
+        #     affordable = [c for c in self.shop_two if self.active_player.can_afford(c)]
+
+        affordable = [c for c in self.active_shop if self.active_player.can_afford(c)]
 
         if not affordable:
             display.log_cant_afford(
@@ -96,6 +144,30 @@ class Turn:
         display.render_phase_header("Attack Phase")
 
         attackers = [c for c in self.active_player.alive_creatures if c.can_attack]
+        
+        #### activate special creature abilities
+        # inspirers add stats to one random creature you have
+        inspirers = get_creatures_by_ability(attackers, Ability.INSPIRATION)
+        for inspirer in inspirers:
+            display.log_cast(inspirer.name, Ability.INSPIRATION.value)
+            attacker = random.choice(attackers) # pick random attacker to inspire
+            attacker.attack += 10
+            display.log_effect(attacker.name, "feels stronger! Attack +10")
+        
+        # insight checks and if you have at least one, allows you to make creatures in the shop stronger
+        insight = has_ability(attackers, Ability.INSIGHT)
+        if insight:
+            insighters = get_creatures_by_ability(attackers, Ability.INSIGHT)
+            display.log_cast(insighters[0].name, Ability.INSIGHT.value)
+            buff_random_shop_creature(self.active_shop, hp_bonus=1, attack_bonus=1)
+        
+        # creation adds random creature from opponent shop or bonus shop into this one
+        creation = has_ability(attackers, Ability.CREATION)
+        if creation:
+            creators = get_creatures_by_ability(attackers, Ability.CREATION)
+            display.log_cast(creators[0].name, Ability.CREATION.value)
+            merge_random_creature(self.active_shop, self.opponent_shop)
+        ###########
 
         if not attackers:
             display.log_no_attackers(self.active_player.name)
@@ -159,6 +231,7 @@ class Turn:
         self.active_player.ready_all()
         display.log_readied(self.active_player.name)
         self._switch_active_player()
+        self._switch_active_shop()
         self.turn_number += 1
 
     # --- Full turn ----------------------------------------------------------
@@ -209,16 +282,19 @@ class Turn:
 
 if __name__ == "__main__":
     known_traits = "traits.yaml"
-    shop_one  = load_creatures("creatures.yaml", known_traits, "Medieval")
-    shop_two  = load_creatures("creatures.yaml", known_traits, "Mythical")
+    shop_medieval  = load_creatures("creatures.yaml", known_traits, "Medieval")
+    shop_mythical  = load_creatures("creatures.yaml", known_traits, "Mythical")
+    shop_modern    = load_creatures('creatures.yaml', known_traits, "Modern")
+    
     alice = AIPlayer(name="Princess Alice", hp=20, gold=300)
     bob   = Player(name="Ancient Ent",   hp=200, gold=170)
+    shen  = HumanPlayer(name="Shen", hp=20, gold=200)
 
     game = Turn(
-        player_one    = alice,
-        player_two    = bob,
-        shop_one      = shop_one,
-        shop_two      = shop_two,
+        player_one    = shen,
+        player_two    = alice,
+        shop_one      = shop_modern,
+        shop_two      = shop_medieval,
         gold_per_turn = 3,
     )
     game.run()

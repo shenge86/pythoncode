@@ -2,10 +2,10 @@ creatures:
   - name: Alex the Curious Musician
     hp: 5
     attack: 1
-    ability: Invisibility
-    cost: 10
+    ability: Inspiration
+    cost: 200
     income: 0
-    description: "A teacher and musician with an insatiable curiosity and a sneakiness that goes with it"
+    description: "He will tell you that there is such a thing as good taste in music"
     traits:
       - None
     era: Modern
@@ -14,7 +14,7 @@ creatures:
     hp: 5
     attack: 1
     ability: Creation
-    cost: 10
+    cost: 200
     income: 0
     description: "A daydreamer and writer with a pen that can create new realities"
     traits:
@@ -25,9 +25,9 @@ creatures:
     hp: 5
     attack: 1
     ability: Swiftness
-    cost: 10
+    cost: 200
     income: 0
-    description: "A dancer and tech nerd with a heart of gold"
+    description: "A dancer and tech nerd with a heart of gold; some say she always aspires"
     traits:
       - Blessed
     era: Modern
@@ -36,7 +36,7 @@ creatures:
     hp: 5
     attack: 1
     ability: Insight
-    cost: 10
+    cost: 200
     income: 0
     description: "She has seen aliens and she will tell you about them if you are willing to listen"
     traits:
