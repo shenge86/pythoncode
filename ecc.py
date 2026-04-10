@@ -6,15 +6,44 @@ Created on Thu Apr  9 17:38:08 2026
 @name: Expected Casualty Calculator
 """
 from enum import Enum
+from dataclasses import dataclass
+
 import numpy as np
 
 class FailureMode(Enum):
+    '''Failure modes can occur at any time but their probabilities and casualty area
+    are different depending on the flight regime'''
     THRUST_FAILURE = 'Thrust_Failure'
     EXPLOSION      = 'Explosion'
     GNC_FAILURE    = 'GNC_Failure'
+
+class FlightRegime(Enum):
+    '''Flight regimes of interest set in stone here'''
+    DEORBIT    = 'deorbit'
+    FREEFLIGHT = 'freeflight'
+    PARACHUTE  = 'parachute'
+#%%
+@dataclass    
+class FailureProbability:
+    p_thrustfailure: float = 1.0
+    p_explosion    : float = 1.0
+    p_gncfailure   : float = 1.0
+    p_all          : float = 1.0
+    flight_regime  : FlightRegime = FlightRegime.DEORBIT
     
+    def __post_init__(self):
+        if self.flight_regime == FlightRegime.DEORBIT:
+            self.p_thrustfailure = 0.1
+            self.p_explosion     = 0.01
+            self.p_gncfailure    = 0.05
+        else:
+            self.p_thrustfailure = 0.0
+            self.p_explosion     = 0.0
+            self.p_gncfailure    = 0.05
+            
+        self.p_all = self.p_thrustfailure + self.p_explosion + self.p_gncfailure
 
-
+#%%
 if __name__ == '__main__':
     print('Run basic assessment....')
     print('''Two strategies: 
@@ -22,9 +51,18 @@ if __name__ == '__main__':
           2. Reduce density of impact based on trajectory flies over.
           ''')
     
-    time_of_flight = [0, 100, 200] # seconds
+    # flight regime in seconds
+    tf = 3600 # seconds
+    flight_regime = {FlightRegime.DEORBIT.value:    [0, 600],        # 10 minutes
+                     FlightRegime.FREEFLIGHT.value: [600, tf-600],     # 40 minutes
+                     FlightRegime.PARACHUTE.value:  [tf-600, tf]}    # 10 minutes
+    
+    # use timestep of small amount of seconds; at any timestep there's a probability of failure
+    dt = 10 # seconds
+    time_of_flight = np.arange(0, tf+1, 10) # seconds
     
     # read in an ephemeris (trajectory kernel)
+    
     
     
     #%% Failure modes
@@ -38,8 +76,18 @@ if __name__ == '__main__':
           Explosion soon after launch probability?
           No guidance and control after all prop used up?
           ''')
-          
-    p_failure = 0.0001
+    p_failure = []
+    # for t in range(0, tf + 1, 10):
+    for t in time_of_flight:
+        for regime, (start, end) in flight_regime.items():
+            if start <= t < end or (t == tf and end == tf):  # inclusive upper bound at tf
+                current_regime = regime
+                # break
+                print(f"t={t:5}s  →  {current_regime}")
+                f = FailureProbability(flight_regime = FlightRegime(current_regime))
+                p_failure.append(f.p_all)
+        
+    print(p_failure)
     
     #%% Casualty area
     print('''
@@ -65,7 +113,10 @@ if __name__ == '__main__':
     
     #%%
     P = np.array([1, 1, 1]) * p_failure # probability (must be between 0 and 1)
-    A = np.array([100, 200, 300])   # casualty area in square meters
+    
+    A = np.array([100, 200, 300])   # casualty area depends on type of failure and the altitude
+    
+    # D will be from reading in a trajectory and a population density map
     D = np.array([47, 1500, 5])  # population density of the area at risk for ith event
     
     Ec = 0
