@@ -178,6 +178,24 @@ class Creature:
     def ready(self) -> None:
         self.is_exhausted = False
 
+    # --- Magic helpers -----------------------------------------------------
+    def cast(self, creatures: list[Creature]) -> Creature | None:
+        if self.ability is Ability.INSPIRATION:
+            creature = random.choice(creatures) # pick random creature to inspire
+            choice   = random.random()
+            quantity = int(random.random()*10)
+            
+            if choice <= 0.2:
+                creature.attack += quantity
+            elif choice <= 0.5:
+                creature.max_hp     += 2
+                creature.current_hp += 2
+            elif choice >= 0.5:
+                creature.attack += 1
+            
+        return creature
+
+
     # --- Display ------------------------------------------------------------
 
     def __str__(self) -> str:
@@ -427,7 +445,7 @@ class AIPlayer(Player):
 if __name__ == "__main__":
     creatures_path = 'creatures.yaml'
     traits_path    = 'traits.yaml'
-    era_allowed    = 'Medieval'
+    era_allowed    = 'Modern'
     creatures = load_creatures(creatures_path, traits_path, era_allowed)
 
     print("=== Creatures loaded with traits ===\n")
