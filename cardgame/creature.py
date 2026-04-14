@@ -181,19 +181,25 @@ class Creature:
     # --- Magic helpers -----------------------------------------------------
     def cast(self, creatures: list[Creature]) -> Creature | None:
         if self.ability is Ability.INSPIRATION:
+            print(self.name + " casts Inspiration!")
             creature = random.choice(creatures) # pick random creature to inspire
             choice   = random.random()
-            quantity = int(random.random()*10)
+            quantity = int(random.random()*4) + 1 # add 1 to ensure it is not 0 ever
             
             if choice <= 0.2:
                 creature.attack += quantity
+                print(creature.name + " has attack increase by " + str(quantity))
             elif choice <= 0.5:
                 creature.max_hp     += 2
                 creature.current_hp += 2
+                print(creature.name + " has health increase by 2")
             elif choice >= 0.5:
                 creature.attack += 1
+                print(creature.name + " has attack increase by 1")
             
-        return creature
+            return creature
+        else:
+            return None
 
 
     # --- Display ------------------------------------------------------------
@@ -414,9 +420,35 @@ class Player:
 
 #%%
 class HumanPlayer(Player):
-    def choose_purchase(self, shop):
-        pass
+    def choose_purchase(self, affordable: list[Creature]) -> bool:
+        gold = self.gold
         # show options
+        print('Choose a number or q to quit: ')
+        
+        chosen_str = ''
+        chosen_arr = []
+        
+        while chosen_str not in ['q', 'quit']:
+            if len(affordable) > 0:
+                for i, creature in enumerate(affordable):
+                    print(f'[{i}] {creature.name}  | {creature.cost} gold')
+            
+                chosen_str = input('Enter a number to choose: ')
+                chosen = affordable[int(chosen_str)]
+                gold -= chosen.cost
+                chosen_arr.append(chosen)
+                
+                # print(chosen_arr)
+                
+                # update options (reduce it further)
+                affordable = [c for c in affordable if (gold >= c.cost)]
+            else:
+                chosen_str = 'q'
+                print('You have no more gold to purchase anyone!')
+        
+        return chosen_arr
+        
+        
 
 class AIPlayer(Player):
     def choose_purchase(self, affordable: list[Creature]) -> bool:
@@ -470,3 +502,8 @@ if __name__ == "__main__":
     #%% get defenders
     defenders = [c for c in creatures if c.ability is Ability.DEFENDER]
     print(defenders)
+    
+    #%% magic casts
+    print(alice.creatures)
+    alice.creatures[0].cast(alice.creatures)
+    print(alice.creatures)

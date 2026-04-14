@@ -14,7 +14,7 @@ from __future__ import annotations
 import random
 import copy # required to not reference the same creature over and over
 
-from creature import Creature, Player, AIPlayer, load_creatures, load_traits
+from creature import Creature, Player, AIPlayer, HumanPlayer, load_creatures, load_traits
 from creature import Ability, get_creatures_by_ability, has_ability
 import display
 
@@ -150,9 +150,10 @@ class Turn:
         inspirers = get_creatures_by_ability(attackers, Ability.INSPIRATION)
         for inspirer in inspirers:
             display.log_cast(inspirer.name, Ability.INSPIRATION.value)
-            attacker = random.choice(attackers) # pick random attacker to inspire
-            attacker.attack += 10
-            display.log_effect(attacker.name, "feels stronger! Attack +10")
+            inspirer.cast(self.active_player.alive_creatures)
+            # attacker = random.choice(attackers) # pick random attacker to inspire
+            # attacker.attack += 10
+            # display.log_effect(attacker.name, "feels stronger! Attack +10")
         
         # insight checks and if you have at least one, allows you to make creatures in the shop stronger
         insight = has_ability(attackers, Ability.INSIGHT)
@@ -286,7 +287,7 @@ if __name__ == "__main__":
     shop_mythical  = load_creatures("creatures.yaml", known_traits, "Mythical")
     shop_modern    = load_creatures('creatures.yaml', known_traits, "Modern")
     
-    alice = AIPlayer(name="Princess Alice", hp=20, gold=300)
+    alice = AIPlayer(name="Princess Alice", hp=10, gold=300)
     bob   = Player(name="Ancient Ent",   hp=200, gold=170)
     shen  = HumanPlayer(name="Shen", hp=20, gold=200)
 
