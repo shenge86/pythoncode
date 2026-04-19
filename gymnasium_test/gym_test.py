@@ -7,9 +7,20 @@ Created on Thu Apr 16 23:04:47 2026
 
 # Run `pip install "gymnasium[classic-control]"` for this example.
 import gymnasium as gym
+import pygame
 
 # Create our training environment - a cart with a pole that needs balancing
 env = gym.make("CartPole-v1", render_mode="human")
+
+# What can your agent do?
+print(f"Action space: {env.action_space}")  # Discrete(2) - left or right
+print(f"Sample action: {env.action_space.sample()}")  # 0 or 1
+
+# What can your agent see?
+# Box observation space (continuous values)
+print(f"Observation space: {env.observation_space}")  # Box with 4 values
+# Box([-4.8, -inf, -0.418, -inf], [4.8, inf, 0.418, inf])
+print(f"Sample observation: {env.observation_space.sample()}")  # Random valid observation
 
 # Reset environment to start a new episode
 observation, info = env.reset()
@@ -23,6 +34,7 @@ print(f"Starting observation: {observation}")
 episode_over = False
 total_reward = 0
 
+runnumber = 1
 while not episode_over:
     # Choose an action: 0 = push cart left, 1 = push cart right
     action = env.action_space.sample()  # Random action for now - real agents will be smarter!
@@ -36,6 +48,15 @@ while not episode_over:
 
     total_reward += reward
     episode_over = terminated or truncated
+    runnumber += 1
+    print('Run number: ', runnumber)
 
 print(f"Episode finished! Total reward: {total_reward}")
+
+waiting = True
+while waiting:
+     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            waiting = False
+
 env.close()
