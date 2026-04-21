@@ -40,6 +40,10 @@ TRAIT_COLOR: dict[str, str] = {
 }
 
 FLAVOR_COMMENTS = {
+    "activate": [
+        "The magic has concluded.",
+        "All spells are done!",
+    ],
     "attack": [
         "The battlefield trembles.",
         "No mercy shown.",

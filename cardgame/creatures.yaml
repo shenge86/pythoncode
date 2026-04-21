@@ -1,4 +1,26 @@
 creatures:
+  - name: Office Worker
+    hp: 1
+    attack: 0
+    ability: None
+    cost: 10
+    income: 10
+    description: "A white collar office worker who stares at a screen most of the time"
+    traits:
+      - None
+    era: Modern
+
+  - name: Factory Worker
+    hp: 1
+    attack: 1
+    ability: None
+    cost: 5
+    income: 5
+    description: "A blue collar worker in a factory who has somehow managed to offer some resistance"
+    traits:
+      - None
+    era: Modern
+    
   - name: Alex the Curious Musician
     hp: 5
     attack: 1

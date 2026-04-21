@@ -33,7 +33,7 @@ def buff_random_shop_creature(shop: list[Creature], hp_bonus: int = 5, attack_bo
     chosen.current_hp  += hp_bonus
     chosen.attack      += attack_bonus
 
-    console.print(
+    display.console.print(
         f"  [bold yellow1]⚡ {chosen.name}[/] has been empowered! "
         f"[green3]+{hp_bonus} HP[/]  [red1]+{attack_bonus} ATK[/]"
     )
@@ -45,13 +45,13 @@ def merge_random_creature(shop_one: list[Creature], shop_two: list[Creature]) ->
     Returns the added creature, or None if shop_two is empty.
     """
     if not shop_two:
-        console.print("  [grey50 italic]Second shop is empty, nothing to merge.[/]")
+        display.console.print("  [grey50 italic]Second shop is empty, nothing to merge.[/]")
         return None
 
     chosen = copy.deepcopy(random.choice(shop_two))
     shop_one.append(chosen)
 
-    console.print(
+    display.console.print(
         f"  [bold cyan]✦ {chosen.name}[/] has arrived in the shop! "
         f"[grey50]HP: {chosen.max_hp}  ATK: {chosen.attack}  Cost: {chosen.cost}g[/]"
     )
@@ -140,10 +140,10 @@ class Turn:
             
             display.log_flavor('purchase')
 
-    def attack_phase(self) -> None:
-        display.render_phase_header("Attack Phase")
-
-        attackers = [c for c in self.active_player.alive_creatures if c.can_attack]
+    def activate_phase(self) -> None:
+        display.render_phase_header("Activate Phase")
+        
+        attackers = self.active_player.alive_creatures
         
         #### activate special creature abilities
         # inspirers add stats to one random creature you have
@@ -151,9 +151,6 @@ class Turn:
         for inspirer in inspirers:
             display.log_cast(inspirer.name, Ability.INSPIRATION.value)
             inspirer.cast(self.active_player.alive_creatures)
-            # attacker = random.choice(attackers) # pick random attacker to inspire
-            # attacker.attack += 10
-            # display.log_effect(attacker.name, "feels stronger! Attack +10")
         
         # insight checks and if you have at least one, allows you to make creatures in the shop stronger
         insight = has_ability(attackers, Ability.INSIGHT)
@@ -168,6 +165,15 @@ class Turn:
             creators = get_creatures_by_ability(attackers, Ability.CREATION)
             display.log_cast(creators[0].name, Ability.CREATION.value)
             merge_random_creature(self.active_shop, self.opponent_shop)
+        
+        display.log_flavor('activate')
+        
+
+    def attack_phase(self) -> None:
+        display.render_phase_header("Attack Phase")
+
+        attackers = [c for c in self.active_player.alive_creatures if c.can_attack]
+        
         ###########
 
         if not attackers:
@@ -240,6 +246,7 @@ class Turn:
     def play_turn(self) -> None:
         display.render_turn_header(self.turn_number, self.active_player.name)
         self.purchase_phase()
+        self.activate_phase()
         self.attack_phase()
         self.disposal_phase()
         self.end_phase()

@@ -352,24 +352,26 @@ class Player:
         # self.gold -= chosen.cost # do not uncomment if in turns.py
         return [chosen]
  
-    def purchase(self, creature: Creature) -> bool:
+    def purchase(self, creature: Creature, verbosity: bool=False) -> bool:
         """
         Attempt to purchase a creature. Returns True if successful,
         False if the player can't afford it.
         """
         if not self.can_afford(creature):
-            print(
-                f"  {self.name} can't afford {creature.name}! "
-                f"(costs {creature.cost}, have {self.gold} gold)"
-            )
+            if verbosity:
+                print(
+                    f"  {self.name} can't afford {creature.name}! "
+                    f"(costs {creature.cost}, have {self.gold} gold)"
+                )
             return False
  
         self.gold -= creature.cost
         self.creatures.append(creature)
-        print(
-            f"  {self.name} purchased {creature.name} for {creature.cost} gold. "
-            f"({self.gold} gold remaining)"
-        )
+        if verbosity:
+            print(
+                f"  {self.name} purchased {creature.name} for {creature.cost} gold. "
+                f"({self.gold} gold remaining)"
+            )
         return True
  
     def sell(self, creature: Creature) -> bool:
@@ -475,6 +477,8 @@ class AIPlayer(Player):
         
 #%%
 if __name__ == "__main__":
+    import display
+    
     creatures_path = 'creatures.yaml'
     traits_path    = 'traits.yaml'
     era_allowed    = 'Modern'
@@ -504,6 +508,17 @@ if __name__ == "__main__":
     print(defenders)
     
     #%% magic casts
-    print(alice.creatures)
-    alice.creatures[0].cast(alice.creatures)
-    print(alice.creatures)
+    chosen = creatures[2]
+    alice.purchase(chosen)
+    alice.update_income()
+    
+    display.log_purchase(
+        alice.name,
+        chosen.name,
+        chosen.cost,
+        alice.gold,
+    )
+    
+    chosen.cast(alice.creatures)
+    
+    display.render_player(alice)
