@@ -6,6 +6,8 @@ from typing import Optional
 import yaml
 import random
 
+import display
+
 """
 Card Game
 
@@ -320,6 +322,7 @@ class Player:
         self.gold       = gold
         self.income     = income
         self.creatures: list[Creature] = []
+        self.opponent_player: Player | None = None
  
     # --- Properties ---------------------------------------------------------
  
@@ -399,6 +402,50 @@ class Player:
             self.income += creature.income
 
     # --- Turn management ----------------------------------------------------
+    def attack_logic(self, attackers: list[Creature], defenders: list[Creature]) -> None:
+        for attacker in attackers:
+            if defenders:
+                self._resolve_combat(attacker, defenders)
+            else:
+                self._resolve_direct_attack(attacker)
+            attacker.exhaust()
+
+    def _select_target(self, defenders: list[Creature]) -> Creature:
+        walls = get_creatures_by_ability(defenders, Ability.DEFENDER)
+        if walls:
+            target = walls[0]
+            display.log_defender(target.name)
+        else:
+            target = random.choice(defenders)
+        return target
+    
+    def _resolve_combat(self, attacker: Creature, defenders: list[Creature]) -> None:
+        target = self._select_target(defenders)
+    
+        display.log_attack(attacker.name, target.name, attacker.attack)
+        display.log_flavor('attack')
+        target.take_damage(attacker.attack)
+    
+        if not target.is_alive:
+            display.log_creature_destroyed(target.name)
+            display.log_flavor('destroyed')
+            return
+    
+        # Defender counter-attacks if still alive and attacker lacks SWIFTNESS
+        if attacker.ability != Ability.SWIFTNESS:
+            display.log_attack(target.name, attacker.name, target.attack)
+            display.log_flavor('attack')
+            attacker.take_damage(target.attack)
+    
+            if not attacker.is_alive:
+                display.log_creature_destroyed(attacker.name)
+                display.log_flavor('destroyed')
+    
+    def _resolve_direct_attack(self, attacker: Creature) -> None:
+        display.log_direct_attack(attacker.name, self.opponent_player.name, attacker.attack)
+        display.log_flavor('direct_attack')
+        self.opponent_player.take_damage(attacker.attack)
+    
  
     def ready_all(self) -> None:
         """Refresh all creatures at the start of a new turn."""
@@ -422,7 +469,11 @@ class Player:
 
 #%%
 class HumanPlayer(Player):
-    def choose_purchase(self, affordable: list[Creature]) -> bool:
+    def choose_purchase(self, affordable: list[Creature]) -> list[Creature]:
+        print('You have these creatures so far: ')
+        for c in self.creatures:
+            print(c.name)
+        
         gold = self.gold
         # show options
         print('Choose a number or q to quit: ')
@@ -436,24 +487,32 @@ class HumanPlayer(Player):
                     print(f'[{i}] {creature.name}  | {creature.cost} gold')
             
                 chosen_str = input('Enter a number to choose: ')
-                chosen = affordable[int(chosen_str)]
-                gold -= chosen.cost
-                chosen_arr.append(chosen)
-                
-                # print(chosen_arr)
+                try:
+                    chosen = affordable[int(chosen_str)]
+                    gold -= chosen.cost
+                    chosen_arr.append(chosen)
+                except ValueError:
+                    chosen = chosen_str
                 
                 # update options (reduce it further)
                 affordable = [c for c in affordable if (gold >= c.cost)]
             else:
                 chosen_str = 'q'
                 print('You have no more gold to purchase anyone!')
+            
+            # print all creatures purchased so far
+            print('Gold remaining: ', gold)
+            print('You have these creatures purchased so far this turn: ')
+            for chosen in chosen_arr:
+                print(chosen.name)
         
         return chosen_arr
-        
+    
+
         
 
 class AIPlayer(Player):
-    def choose_purchase(self, affordable: list[Creature]) -> bool:
+    def choose_purchase(self, affordable: list[Creature]) -> list[Creature]:
         gold = self.gold # temporary variable for calculating when to stop
         chosen_cheapest  = min(affordable, key=lambda c: c.cost)
         print('Cheapest creature: ', chosen_cheapest)

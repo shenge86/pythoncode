@@ -17,7 +17,12 @@ from rich.rule import Rule
 
 import random
 
-from creature import Creature, Player
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from creature import Creature, Player
+
+# from creature import Creature, Player
 
 console = Console()
 

@@ -80,6 +80,9 @@ class Turn:
         self.active_shop     = shop_one
         self.opponent_shop   = shop_two
 
+        player_one.opponent_player = player_two
+        player_two.opponent_player = player_one
+
     # --- Helpers ------------------------------------------------------------
 
     def _switch_active_player(self) -> None:
@@ -173,50 +176,14 @@ class Turn:
         display.render_phase_header("Attack Phase")
 
         attackers = [c for c in self.active_player.alive_creatures if c.can_attack]
-        
+        defenders = self.opponent_player.alive_creatures
         ###########
 
         if not attackers:
             display.log_no_attackers(self.active_player.name)
             return
 
-        for attacker in attackers:
-            defenders = self.opponent_player.alive_creatures
-
-            if defenders:
-                # Defenders always defend first before anyone else
-                defenders_walls = get_creatures_by_ability(defenders, Ability.DEFENDER)
-                
-                if len(defenders_walls) == 0:
-                    # if no creatures with DEFENDER ability, choose a random creature
-                    target = random.choice(defenders)
-                else:
-                    target = defenders_walls[0]
-                    display.log_defender(target.name)
-                
-                # Attacker hits defender
-                display.log_attack(attacker.name, target.name, attacker.attack)
-                display.log_flavor('attack')
-                
-                target.take_damage(attacker.attack)
-                if not target.is_alive:
-                    display.log_creature_destroyed(target.name)
-                    display.log_flavor('destroyed')
-                elif target.is_alive and attacker.ability is not attacker.ability.SWIFTNESS: # Defender counter-attacks if still alive
-                    display.log_attack(target.name, attacker.name, target.attack)
-                    display.log_flavor('attack')
-                    attacker.take_damage(target.attack)
-                    if not attacker.is_alive:
-                        display.log_creature_destroyed(attacker.name)
-                        display.log_flavor('destroyed')
-            else:
-                display.log_direct_attack(
-                    attacker.name, self.opponent_player.name, attacker.attack
-                )
-                display.log_flavor('direct_attack')
-                self.opponent_player.take_damage(attacker.attack)
-
-            attacker.exhaust()
+        self.active_player.attack_logic(attackers, defenders)
 
     def disposal_phase(self) -> None:
         display.render_phase_header("Disposal Phase")
