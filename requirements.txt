@@ -1,0 +1,13 @@
+Pillow
+exif
+matplotlib
+Shapely
+rich
+networkx
+numpy
+pandas
+pycountry
+pygame
+reverse-geocoder
+PyYAML
+gymnasium

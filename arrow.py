@@ -61,6 +61,16 @@ def cells_under_arrow(start, end, grid_size, n_samples=500):
 hit_cells = cells_under_arrow(arrow_start, arrow_end, GRID_SIZE)
 arrow_sum = sum(grid[r, c] for r, c in hit_cells)
 
+#%% now incorporate time of flight
+tof_arr = np.array([0, 0, 1, 0.5, 2, 3, 5, 10, 0])
+tof_total = sum(tof_arr)
+tof_sum = 0
+for i,(r,c) in zip(tof_arr, hit_cells):
+    print(i)
+    print(grid[r,c])
+    tof_sum += (i*grid[r,c])
+
+#%%
 # -------------------------------------------------------------------
 # 4.  Plot
 # -------------------------------------------------------------------
@@ -73,7 +83,7 @@ ax.invert_yaxis()          # row 0 at top, matches array indexing
 cmap = get_cmap("YlGnBu")
 norm = Normalize(vmin=grid.min(), vmax=grid.max())
 
-for row in range(GRID_SIZE):
+for row in range(GRID_SIZE):)
     for col in range(GRID_SIZE):
         value   = grid[row, col]
         color   = cmap(norm(value))
